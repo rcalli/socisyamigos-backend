@@ -1,5 +1,4 @@
 package pe.com.edu.socisyamigos.entity;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,21 +10,22 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name="linea_carrera")
-public class LineaCarrera {
-
+@Table(name="usuario_rol")
+public class Usuario_rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idlinea_carrera")
+    @Column(name = "idusuario_rol")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="idcarrera", nullable = false)
-    private Carrera carrera;
+    @JoinColumn(name = "idusuario", nullable = false)
+    private Usuario usuario;
 
-    @Column(name="nombre", length = 20, nullable = false)
-    private String nombre;
+    @ManyToOne
+    @JoinColumn(name = "idrol", nullable = false)
+    private Rol rol;
 
-    @Column(name="estado")
+    @Column(name = "estado")
     private Integer estado;
+
 }

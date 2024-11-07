@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.Set;
 
 @AllArgsConstructor
@@ -13,21 +14,26 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name="acceso")
-public class Acceso {
+@Table(name="representante")
+public class Representante {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idacceso")
+    @Column(name="idrepresentante")
     private Long id;
 
-    @Column(name="nombre", length = 30, nullable = false)
-    private String nombre;
+    @ManyToOne
+    @JoinColumn(name="idpersona", nullable = false)
+    private Persona persona;
+
+    @ManyToOne
+    @JoinColumn(name="idempresa", nullable = false)
+    private Empresa empresa;
+
+    @Column(name="cargo", length = 30, nullable = false)
+    private String cargo;
 
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "acceso")
-    @JsonIgnore
-    private Set<Acceso_rol> acceso_roles;
 }

@@ -49,4 +49,24 @@ public class Persona {
     @JsonIgnore
     private Set<Usuario> usuarios;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Detalle_PPP> detalle_ppps;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Representante> representantes;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Supervisor> supervisores;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Estudiante> estudiantes;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Plan_Carrera> plan_carreras;
+
 }

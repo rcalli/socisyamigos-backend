@@ -1,10 +1,14 @@
 package pe.com.edu.socisyamigos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.sound.sampled.Line;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,4 +28,16 @@ public class Carrera {
 
     @Column(name="estado")
     private Integer estado;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "carrera")
+    @JsonIgnore
+    private Set<Supervisor> supervisores;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "carrera")
+    @JsonIgnore
+    private Set<Plan_Carrera> plan_carreras;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "carrera")
+    @JsonIgnore
+    private Set<Linea_Carrera> linea_carreras;
 }
