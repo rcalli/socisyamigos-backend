@@ -1,10 +1,13 @@
 package pe.com.edu.socisyamigos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,4 +33,8 @@ public class Plan {
 
     @Column(name="estado")
     private Integer estado;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "plan")
+    @JsonIgnore
+    private Set<Plan_Carrera> plan_carreras;
 }

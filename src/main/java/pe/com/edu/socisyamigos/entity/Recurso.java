@@ -6,30 +6,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
-@Table(name="plan_evaluacion")
-public class PlanEvaluacion {
+@Table(name="recurso")
+public class Recurso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idplan_evaluacion")
+    @Column(name="idrecurso")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="idplan_carrera", nullable = false)
-    private PlanCarrera planCarrera;
+    @JoinColumn(name="idproceso_requisito", nullable = false)
+    private Proceso_Requisito proceso_requisito;
 
-    @ManyToOne
-    @JoinColumn(name="idevaluacion", nullable = false)
-    private Evaluacion evaluacion;
+    @Column(name="nombre", length = 30, nullable = false)
+    private String nombre;
 
-    @Column(name="peso")
-    private Integer peso;
+    @Column(name="ruta_archivo", length = 200, nullable = false)
+    private String ruta_archivo;
 
     @Column(name="estado")
     private Integer estado;
+
 }

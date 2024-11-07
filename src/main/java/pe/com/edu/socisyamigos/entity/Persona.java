@@ -17,9 +17,10 @@ import lombok.Setter;
 public class Persona {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idpersona")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persona_seq_gen")
+    @SequenceGenerator(name = "persona_seq_gen", sequenceName = "persona_seq", allocationSize = 1)
+    @Column(name = "idpersona", nullable = false)
+    private Long idpersona;
 
     @Column(name="nombre", length = 30, nullable = false)
     private String nombre;
@@ -48,5 +49,25 @@ public class Persona {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
     @JsonIgnore
     private Set<Usuario> usuarios;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Detalle_PPP> detalle_ppps;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Representante> representantes;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Supervisor> supervisores;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Estudiante> estudiantes;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    @JsonIgnore
+    private Set<Plan_Carrera> plan_carreras;
 
 }

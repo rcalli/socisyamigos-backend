@@ -14,33 +14,38 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name="matricula")
-public class Matricula {
+@Table(name="proceso_requisito")
+public class Proceso_Requisito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idmatricula")
+    @Column(name="idproceso_requisito")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name="idestudiante", nullable = false)
-    private Estudiante estudiante;
 
     @ManyToOne
     @JoinColumn(name="idplan_carrera", nullable = false)
     private Plan_Carrera plan_carrera;
 
-    @Column(name="horas_totales")
-    private Integer horas_totales;
+    @ManyToOne
+    @JoinColumn(name="idproceso", nullable = false)
+    private Proceso proceso;
 
-    @Column(name="anio")
-    private Integer anio;
+    @ManyToOne
+    @JoinColumn(name="idrequisito", nullable = false)
+    private Requisito requisito;
+
+    @ManyToOne
+    @JoinColumn(name="idrol", nullable = false)
+    private Rol rol;
+
+    @Column(name="orden")
+    private Integer orden;
 
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matricula")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "proceso_requisito")
     @JsonIgnore
-    private Set<PPP> ppps;
+    private Set<Recurso> recursos;
 
 }

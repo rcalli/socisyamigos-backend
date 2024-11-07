@@ -1,5 +1,6 @@
 package pe.com.edu.socisyamigos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,7 +29,7 @@ public class PPP {
 
     @ManyToOne
     @JoinColumn(name="idlinea_carrera", nullable = false)
-    private LineaCarrera lineaCarrera;
+    private Linea_Carrera linea_carrera;
 
     @ManyToOne
     @JoinColumn(name="idmatricula", nullable = false)
@@ -51,5 +53,13 @@ public class PPP {
 
     @Column(name="estado")
     private Integer estado;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "ppp")
+    @JsonIgnore
+    private Set<PPP_Evaluacion> ppp_evaluaciones;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "ppp")
+    @JsonIgnore
+    private Set<Detalle_PPP> detalle_ppps;
 
 }

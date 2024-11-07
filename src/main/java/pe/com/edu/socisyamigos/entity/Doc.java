@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Date;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -13,21 +15,28 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
-@Table(name="acceso")
-public class Acceso {
+@Table(name="doc")
+public class Doc {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idacceso")
+    @Column(name="iddoc")
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="iddetalle_ppp", nullable = false)
+    private Detalle_PPP detalle_ppp;
 
     @Column(name="nombre", length = 30, nullable = false)
     private String nombre;
 
+    @Column(name="ruta_archivo", length = 200, nullable = false)
+    private String ruta_archivo;
+
+    @Column(name="fecha")
+    private Date fecha;
+
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "acceso")
-    @JsonIgnore
-    private Set<Acceso_rol> acceso_roles;
 }

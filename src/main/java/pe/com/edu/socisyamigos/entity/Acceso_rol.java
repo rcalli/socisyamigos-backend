@@ -1,33 +1,31 @@
 package pe.com.edu.socisyamigos.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 @Entity
-@Table(name="acceso")
-public class Acceso {
-
+@Table(name="acceso_rol")
+public class Acceso_rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idacceso")
+    @Column(name="idacceso_rol")
     private Long id;
 
-    @Column(name="nombre", length = 30, nullable = false)
-    private String nombre;
+    @ManyToOne
+    @JoinColumn(name="idrol", nullable = false)
+    private Rol rol;
+
+    @ManyToOne
+    @JoinColumn(name="idacceso", nullable = false)
+    private Acceso acceso;
 
     @Column(name="estado")
     private Integer estado;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "acceso")
-    @JsonIgnore
-    private Set<Acceso_rol> acceso_roles;
 }
