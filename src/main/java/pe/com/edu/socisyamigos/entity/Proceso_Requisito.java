@@ -24,7 +24,7 @@ public class Proceso_Requisito {
 
     @ManyToOne
     @JoinColumn(name="idplan_carrera", nullable = false)
-    private Plan_Carrera planCarrera;
+    private Plan_Carrera plan_carrera;
 
     @ManyToOne
     @JoinColumn(name="idproceso", nullable = false)

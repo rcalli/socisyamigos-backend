@@ -29,7 +29,7 @@ public class PPP {
 
     @ManyToOne
     @JoinColumn(name="idlinea_carrera", nullable = false)
-    private Linea_Carrera lineaCarrera;
+    private Linea_Carrera linea_carrera;
 
     @ManyToOne
     @JoinColumn(name="idmatricula", nullable = false)
