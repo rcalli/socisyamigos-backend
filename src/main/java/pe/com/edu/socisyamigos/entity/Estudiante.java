@@ -18,9 +18,10 @@ import java.util.Set;
 public class Estudiante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idestudiante")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "estudiante_seq_gen")
+    @SequenceGenerator(name = "estudiante_seq_gen", sequenceName = "estudiante_seq", allocationSize = 1)
+    @Column(name = "idestudiante", nullable = false)
+    private Long idestudiante;
 
     @ManyToOne
     @JoinColumn(name="idpersona", nullable = false)

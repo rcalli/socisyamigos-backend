@@ -1,5 +1,6 @@
 package pe.com.edu.socisyamigos.serviceImpl;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,6 +22,7 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     @Autowired
     private EstudianteRepository categoriaRepository;
+
     @Override
     public Estudiante create(Estudiante cat) {
 
@@ -57,48 +59,99 @@ public class EstudianteServiceImpl implements EstudianteService {
     private EstudianteRepository estudianteRepository;
 
     public void cargarDatosDesdeExcel(MultipartFile file) throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-        XSSFSheet sheet = workbook.getSheetAt(0);
+        try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
 
-        for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // Saltar encabezado
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // Saltar encabezado
 
-            // Leer datos de la fila y asignarlos a los atributos de Persona y Estudiante
-            String nombre = row.getCell(0).getStringCellValue();
-            String apepat = row.getCell(1).getStringCellValue();
-            String apemat = row.getCell(2).getStringCellValue();
-            String direccion = row.getCell(3).getStringCellValue();
-            String dni = row.getCell(4).getStringCellValue();
-            String correo = row.getCell(5).getStringCellValue();
-            String telefono = row.getCell(6).getStringCellValue();
-            int estadoPersona = (int) row.getCell(7).getNumericCellValue();
+                try {
+                    // Validar y leer datos de Persona
+                    String nombre = getCellValueAsString(row.getCell(0));
+                    String apepat = getCellValueAsString(row.getCell(1));
+                    String apemat = getCellValueAsString(row.getCell(2));
+                    String direccion = getCellValueAsString(row.getCell(3));
+                    String dni = getCellValueAsString(row.getCell(4));
+                    String correo = getCellValueAsString(row.getCell(5));
+                    String telefono = getCellValueAsString(row.getCell(6));
+                    Integer estadoPersona = (int) getCellValueAsNumeric(row.getCell(7));
 
-            // Crear entidad Persona y guardar
-            Persona persona = new Persona();
-            persona.setNombre(nombre);
-            persona.setApepat(apepat);
-            persona.setApemat(apemat);
-            persona.setDireccion(direccion);
-            persona.setDni(dni);
-            persona.setCorreo(correo);
-            persona.setTelefono(telefono);
-            persona.setEstado(estadoPersona);
-            personaRepository.save(persona); // Guardamos la persona y obtenemos el ID generado
+                    // Verificar que los campos obligatorios de Persona no estén vacíos o nulos
+                    if (nombre.isEmpty() || apepat.isEmpty() || dni.isEmpty() || correo.isEmpty() || estadoPersona == null) {
+                        System.err.println("Datos incompletos para Persona en la fila " + row.getRowNum());
+                        continue; // Saltar a la siguiente fila si falta algún dato de Persona
+                    }
 
-            // Asumimos que las siguientes columnas corresponden a Estudiante
-            long idEstudiante = (int) row.getCell(8).getNumericCellValue();
-            String codigo = row.getCell(9).getStringCellValue();
-            int estadoEstudiante = (int) row.getCell(10).getNumericCellValue();
+                    // Crear y guardar entidad Persona
+                    Persona persona = new Persona();
+                    persona.setNombre(nombre);
+                    persona.setApepat(apepat);
+                    persona.setApemat(apemat);
+                    persona.setDireccion(direccion);
+                    persona.setDni(dni);
+                    persona.setCorreo(correo);
+                    persona.setTelefono(telefono);
+                    persona.setEstado(estadoPersona);
 
-            // Crear entidad Estudiante y guardar
-            Estudiante estudiante = new Estudiante();
-            estudiante.setId(idEstudiante);
-            estudiante.setPersona( persona); // RelaciÃ³n con Persona
-            estudiante.setCodigo(codigo);
-            estudiante.setEstado(estadoEstudiante);
-            estudianteRepository.save(estudiante);
+                    Optional<Persona> existingPersona = personaRepository.findByDni(dni);
+                    if (existingPersona.isPresent()) {
+                        persona = existingPersona.get();
+                    } else {
+                        personaRepository.save(persona);
+                    }
+
+                    // Leer datos de Estudiante si el campo 'codigo' tiene datos válidos
+                    String codigo = getCellValueAsString(row.getCell(9));
+                    if (codigo != null && !codigo.isEmpty()) {
+                        Long idEstudiante = (long) getCellValueAsNumeric(row.getCell(8));
+                        Integer estadoEstudiante = (int) getCellValueAsNumeric(row.getCell(10));
+
+                        // Verificar que los campos obligatorios de Estudiante no estén vacíos o nulos
+                        if (estadoEstudiante == null) {
+                            System.err.println("Datos incompletos para Estudiante en la fila " + row.getRowNum());
+                            continue; // Saltar si faltan datos obligatorios para Estudiante
+                        }
+
+                        // Crear y guardar entidad Estudiante
+                        Estudiante estudiante = new Estudiante();
+                        estudiante.setIdestudiante(idEstudiante);
+                        estudiante.setPersona(persona);
+                        estudiante.setCodigo(codigo);
+                        estudiante.setEstado(estadoEstudiante);
+
+                        Optional<Estudiante> existingEstudiante = estudianteRepository.findByCodigo(codigo);
+                        if (existingEstudiante.isPresent()) {
+                            estudiante = existingEstudiante.get();
+                        } else {
+                            estudianteRepository.save(estudiante);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("Error en la fila " + row.getRowNum() + ": " + e.getMessage());
+                }
+            }
         }
-        workbook.close();
     }
 
+    // Métodos auxiliares para obtener el valor de las celdas
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) return "";
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf((long) cell.getNumericCellValue());
+            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
+            case FORMULA -> cell.getCellFormula();
+            default -> "";
+        };
+    }
+
+    private double getCellValueAsNumeric(Cell cell) {
+        if (cell == null) return 0;
+        return switch (cell.getCellType()) {
+            case NUMERIC -> cell.getNumericCellValue();
+            case STRING -> Double.parseDouble(cell.getStringCellValue());
+            default -> 0;
+        };
+    }
 }

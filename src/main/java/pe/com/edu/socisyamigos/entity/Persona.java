@@ -17,9 +17,10 @@ import lombok.Setter;
 public class Persona {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idpersona")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persona_seq_gen")
+    @SequenceGenerator(name = "persona_seq_gen", sequenceName = "persona_seq", allocationSize = 1)
+    @Column(name = "idpersona", nullable = false)
+    private Long idpersona;
 
     @Column(name="nombre", length = 30, nullable = false)
     private String nombre;
