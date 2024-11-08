@@ -7,10 +7,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import pe.com.edu.socisyamigos.entity.Estudiante;
-import pe.com.edu.socisyamigos.entity.Persona;
-import pe.com.edu.socisyamigos.repository.EstudianteRepository;
-import pe.com.edu.socisyamigos.repository.PersonaRepository;
+import pe.com.edu.socisyamigos.entity.*;
+import pe.com.edu.socisyamigos.repository.*;
 import pe.com.edu.socisyamigos.service.EstudianteService;
 
 import java.io.IOException;
@@ -22,6 +20,24 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     @Autowired
     private EstudianteRepository categoriaRepository;
+
+    @Autowired
+    private MatriculaRepository matriculaRepository;
+
+    @Autowired
+    private PersonaRepository personaRepository;
+
+    @Autowired
+    private EstudianteRepository estudianteRepository;
+
+    @Autowired
+    private PlanRepository planRepository;
+
+    @Autowired
+    private Plan_CarreraRepository plan_carreraRepository;
+
+    @Autowired
+    private CarreraRepository carreraRepository;
 
     @Override
     public Estudiante create(Estudiante cat) {
@@ -51,12 +67,20 @@ public class EstudianteServiceImpl implements EstudianteService {
 
         return categoriaRepository.findAll();
     }
+    private int[] extractAnioYEtapaFromPlan(String nombrePlan) {
+        try {
+            // Suponiendo que el formato es "YYYY-X" (ej. "2024-2")
+            String[] partes = nombrePlan.split("-");
+            int anio = Integer.parseInt(partes[0]); // Primera parte es el año
+            int etapa = Integer.parseInt(partes[1]); // Segunda parte es la etapa
+            return new int[]{anio, etapa};
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            // Manejo de errores en caso de formato inesperado
+            System.err.println("Error al extraer año y etapa del nombre del plan: " + e.getMessage());
+            return new int[]{0, 0}; // Valores por defecto en caso de error
+        }
+    }
 
-    @Autowired
-    private PersonaRepository personaRepository;
-
-    @Autowired
-    private EstudianteRepository estudianteRepository;
 
     public void cargarDatosDesdeExcel(MultipartFile file) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
@@ -66,7 +90,7 @@ public class EstudianteServiceImpl implements EstudianteService {
                 if (row.getRowNum() == 0) continue; // Saltar encabezado
 
                 try {
-                    // Validar y leer datos de Persona
+                    // Leer y validar datos de Persona
                     String nombre = getCellValueAsString(row.getCell(0));
                     String apepat = getCellValueAsString(row.getCell(1));
                     String apemat = getCellValueAsString(row.getCell(2));
@@ -74,56 +98,101 @@ public class EstudianteServiceImpl implements EstudianteService {
                     String dni = getCellValueAsString(row.getCell(4));
                     String correo = getCellValueAsString(row.getCell(5));
                     String telefono = getCellValueAsString(row.getCell(6));
-                    Integer estadoPersona = (int) getCellValueAsNumeric(row.getCell(7));
+                    int estadoPersona = (int) getCellValueAsNumeric(row.getCell(7));
 
-                    // Verificar que los campos obligatorios de Persona no estén vacíos o nulos
-                    if (nombre.isEmpty() || apepat.isEmpty() || dni.isEmpty() || correo.isEmpty() || estadoPersona == null) {
+                    if (nombre.isEmpty() || apepat.isEmpty() || dni.isEmpty() || correo.isEmpty() || estadoPersona == 0) {
                         System.err.println("Datos incompletos para Persona en la fila " + row.getRowNum());
-                        continue; // Saltar a la siguiente fila si falta algún dato de Persona
+                        continue;
                     }
 
-                    // Crear y guardar entidad Persona
-                    Persona persona = new Persona();
-                    persona.setNombre(nombre);
-                    persona.setApepat(apepat);
-                    persona.setApemat(apemat);
-                    persona.setDireccion(direccion);
-                    persona.setDni(dni);
-                    persona.setCorreo(correo);
-                    persona.setTelefono(telefono);
-                    persona.setEstado(estadoPersona);
+                    // Crear o recuperar entidad Persona
+                    Persona persona = personaRepository.findByDni(dni)
+                            .orElseGet(() -> {
+                                Persona newPersona = new Persona();
+                                newPersona.setNombre(nombre);
+                                newPersona.setApepat(apepat);
+                                newPersona.setApemat(apemat);
+                                newPersona.setDireccion(direccion);
+                                newPersona.setDni(dni);
+                                newPersona.setCorreo(correo);
+                                newPersona.setTelefono(telefono);
+                                newPersona.setEstado(estadoPersona);
+                                return personaRepository.save(newPersona);
+                            });
 
-                    Optional<Persona> existingPersona = personaRepository.findByDni(dni);
-                    if (existingPersona.isPresent()) {
-                        persona = existingPersona.get();
-                    } else {
-                        personaRepository.save(persona);
-                    }
-
-                    // Leer datos de Estudiante si el campo 'codigo' tiene datos válidos
-                    String codigo = getCellValueAsString(row.getCell(9));
+                    // Leer datos de Estudiante
+                    String codigo = getCellValueAsString(row.getCell(8));
                     if (codigo != null && !codigo.isEmpty()) {
-                        Long idEstudiante = (long) getCellValueAsNumeric(row.getCell(8));
-                        Integer estadoEstudiante = (int) getCellValueAsNumeric(row.getCell(10));
+                        int estadoEstudiante = (int) getCellValueAsNumeric(row.getCell(9));
+                        if (estadoEstudiante != 0) {
+                            // Crear o recuperar Estudiante
+                            Estudiante estudiante = estudianteRepository.findByCodigo(codigo)
+                                    .orElseGet(() -> {
+                                        Estudiante newEstudiante = new Estudiante();
+                                        newEstudiante.setPersona(persona);
+                                        newEstudiante.setCodigo(codigo);
+                                        newEstudiante.setEstado(estadoEstudiante);
+                                        return estudianteRepository.save(newEstudiante);
+                                    });
 
-                        // Verificar que los campos obligatorios de Estudiante no estén vacíos o nulos
-                        if (estadoEstudiante == null) {
-                            System.err.println("Datos incompletos para Estudiante en la fila " + row.getRowNum());
-                            continue; // Saltar si faltan datos obligatorios para Estudiante
-                        }
+                            // Leer datos para Plan, Carrera y Matricula
+                            String nombrePlan = getCellValueAsString(row.getCell(10));
+                            long idCarrera = (long) getCellValueAsNumeric(row.getCell(11));
+                            if (nombrePlan == null || nombrePlan.isEmpty() || idCarrera == 0) {
+                                System.err.println("Datos incompletos para Plan o Carrera en la fila " + row.getRowNum());
+                                continue;
+                            }
 
-                        // Crear y guardar entidad Estudiante
-                        Estudiante estudiante = new Estudiante();
-                        estudiante.setIdestudiante(idEstudiante);
-                        estudiante.setPersona(persona);
-                        estudiante.setCodigo(codigo);
-                        estudiante.setEstado(estadoEstudiante);
+                            int horasTotales = 0;
+                            int estadoMatricula = 1;
+                            int[] anioEtapa = extractAnioYEtapaFromPlan(nombrePlan); // Extraer año y etapa del nombre del plan
+                            int anioPlan = anioEtapa[0];
+                            int etapa = anioEtapa[1];
+                            int estadoPlan = 1;
 
-                        Optional<Estudiante> existingEstudiante = estudianteRepository.findByCodigo(codigo);
-                        if (existingEstudiante.isPresent()) {
-                            estudiante = existingEstudiante.get();
-                        } else {
-                            estudianteRepository.save(estudiante);
+                            // Buscar o crear Plan en base a los campos únicos
+                            Plan plan = planRepository.findByNombreAndAnioAndEtapaAndEstado(nombrePlan, anioPlan, etapa, estadoPlan)
+                                    .orElseGet(() -> {
+                                        Plan newPlan = new Plan();
+                                        newPlan.setNombre(nombrePlan);
+                                        newPlan.setAnio(anioPlan);
+                                        newPlan.setEtapa(etapa);
+                                        newPlan.setEstado(estadoPlan);
+                                        return planRepository.save(newPlan);
+                                    });
+
+                            Carrera carrera = carreraRepository.findById(idCarrera)
+                                    .orElseThrow(() -> new RuntimeException("Carrera no encontrada con ID: " + idCarrera));
+
+                            // Verificar duplicados en Plan_Carrera usando Plan y Carrera
+                            Optional<Plan_Carrera> existingPlanCarrera = plan_carreraRepository.findByPlanAndCarrera(plan, carrera);
+                            Plan_Carrera planCarrera;
+                            if (existingPlanCarrera.isPresent()) {
+                                planCarrera = existingPlanCarrera.get();
+                            } else {
+                                // Crear nuevo Plan_Carrera si no existe
+                                planCarrera = new Plan_Carrera();
+                                planCarrera.setPlan(plan);
+                                planCarrera.setCarrera(carrera);
+                                planCarrera.setEstado(1); // Estado predeterminado
+                                planCarrera = plan_carreraRepository.save(planCarrera);
+                            }
+
+                            // Evitar duplicados en Matricula
+                            Optional<Matricula> existingMatricula = matriculaRepository.findByEstudianteAndPlanCarreraAndAnio(estudiante, planCarrera, anioPlan);
+                            if (existingMatricula.isPresent()) {
+                                System.err.println("Matrícula duplicada en la fila " + row.getRowNum());
+                                continue;
+                            }
+
+                            // Crear y guardar Matricula
+                            Matricula matricula = new Matricula();
+                            matricula.setEstudiante(estudiante);
+                            matricula.setPlan_carrera(planCarrera);
+                            matricula.setHoras_totales(horasTotales);
+                            matricula.setAnio(anioPlan);
+                            matricula.setEstado(estadoMatricula);
+                            matriculaRepository.save(matricula);
                         }
                     }
 
@@ -133,6 +202,8 @@ public class EstudianteServiceImpl implements EstudianteService {
             }
         }
     }
+
+
 
     // Métodos auxiliares para obtener el valor de las celdas
     private String getCellValueAsString(Cell cell) {

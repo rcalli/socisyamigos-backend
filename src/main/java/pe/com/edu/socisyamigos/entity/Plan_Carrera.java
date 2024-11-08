@@ -18,8 +18,9 @@ import java.util.Set;
 public class Plan_Carrera {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idplan_carrera")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plan_carrera_seq_gen")
+    @SequenceGenerator(name = "plan_carrera_seq_gen", sequenceName = "plan_carrera_seq", allocationSize = 1)
+    @Column(name = "idplan_carrera", nullable = false)
     private Long id;
 
     @ManyToOne

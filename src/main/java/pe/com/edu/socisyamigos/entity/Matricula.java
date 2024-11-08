@@ -18,8 +18,9 @@ import java.util.Set;
 public class Matricula {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idmatricula")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "matricula_seq_gen")
+    @SequenceGenerator(name = "matricula_seq_gen", sequenceName = "matricula_seq", allocationSize = 1)
+    @Column(name = "idmatricula", nullable = false)
     private Long id;
 
     @ManyToOne
