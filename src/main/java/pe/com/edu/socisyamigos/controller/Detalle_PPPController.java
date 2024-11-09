@@ -1,0 +1,84 @@
+
+package pe.com.edu.socisyamigos.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.entity.Detalle_PPP;
+import pe.com.edu.socisyamigos.service.Detalle_PPPService;
+
+@RestController
+@RequestMapping("/api/detalle_ppps")
+@CrossOrigin(origins = "http://localhost:4200")
+public class Detalle_PPPController {
+    
+    @Autowired
+    private Detalle_PPPService detallePppService;
+    
+    @GetMapping
+    public ResponseEntity<List<Detalle_PPP>> readAll() {
+        try {
+            List<Detalle_PPP> detalle_ppp = detallePppService.readAll();
+            if(detalle_ppp.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(detalle_ppp, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Detalle_PPP> crear(@Valid @RequestBody Detalle_PPP cat) {
+        try {
+            Detalle_PPP c = detallePppService.create(cat);
+            return new ResponseEntity<>(c, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Detalle_PPP> getDetalle_PPPId(@PathVariable("id") Long id) {
+        try {
+            Detalle_PPP c = detallePppService.read(id).get();
+            return new ResponseEntity<>(c, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Detalle_PPP> delDetalle_PPP(@PathVariable("id") Long id) {
+        try {
+            detallePppService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateDetalle_PPP(@PathVariable("id") Long id, @Valid @RequestBody Detalle_PPP cat) {
+        Optional<Detalle_PPP> c = detallePppService.read(id);
+        if(!c.isEmpty()) {
+            return new ResponseEntity<>(detallePppService.update(cat), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+}

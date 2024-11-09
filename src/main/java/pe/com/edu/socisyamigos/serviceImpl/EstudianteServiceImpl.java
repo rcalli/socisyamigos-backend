@@ -101,7 +101,7 @@ public class EstudianteServiceImpl implements EstudianteService {
                     String dni = getCellValueAsString(row.getCell(4));
                     String correo = getCellValueAsString(row.getCell(5));
                     String telefono = getCellValueAsString(row.getCell(6));
-                    int estadoPersona = (int) getCellValueAsNumeric(row.getCell(7));
+                    int estadoPersona = 1;
 
                     if (nombre.isEmpty() || apepat.isEmpty() || dni.isEmpty() || correo.isEmpty() || estadoPersona == 0) {
                         System.err.println("Datos incompletos para Persona en la fila " + row.getRowNum());
@@ -134,79 +134,77 @@ public class EstudianteServiceImpl implements EstudianteService {
                     });
 
                     // Leer datos de Estudiante
-                    String codigo = getCellValueAsString(row.getCell(8));
+                    String codigo = getCellValueAsString(row.getCell(7));
                     if (codigo != null && !codigo.isEmpty()) {
-                        int estadoEstudiante = (int) getCellValueAsNumeric(row.getCell(9));
-                        if (estadoEstudiante != 0) {
-                            // Crear o recuperar Estudiante
-                            Estudiante estudiante = estudianteRepository.findByCodigo(codigo)
-                                    .orElseGet(() -> {
-                                        Estudiante newEstudiante = new Estudiante();
-                                        newEstudiante.setPersona(persona);
-                                        newEstudiante.setCodigo(codigo);
-                                        newEstudiante.setEstado(estadoEstudiante);
-                                        return estudianteRepository.save(newEstudiante);
-                                    });
+                        int estadoEstudiante = 1;
+                        // Crear o recuperar Estudiante
+                        Estudiante estudiante = estudianteRepository.findByCodigo(codigo)
+                                .orElseGet(() -> {
+                                    Estudiante newEstudiante = new Estudiante();
+                                    newEstudiante.setPersona(persona);
+                                    newEstudiante.setCodigo(codigo);
+                                    newEstudiante.setEstado(estadoEstudiante);
+                                    return estudianteRepository.save(newEstudiante);
+                                });
 
-                            // Leer datos para Plan, Carrera y Matricula
-                            String nombrePlan = getCellValueAsString(row.getCell(10));
-                            long idCarrera = (long) getCellValueAsNumeric(row.getCell(11));
-                            if (nombrePlan == null || nombrePlan.isEmpty() || idCarrera == 0) {
-                                System.err.println("Datos incompletos para Plan o Carrera en la fila " + row.getRowNum());
-                                continue;
-                            }
-
-                            int horasTotales = 0;
-                            int estadoMatricula = 1;
-                            int[] anioEtapa = extractAnioYEtapaFromPlan(nombrePlan); // Extraer año y etapa del nombre del plan
-                            int anioPlan = anioEtapa[0];
-                            int etapa = anioEtapa[1];
-                            int estadoPlan = 1;
-
-                            // Buscar o crear Plan en base a los campos únicos
-                            Plan plan = planRepository.findByNombreAndAnioAndEtapaAndEstado(nombrePlan, anioPlan, etapa, estadoPlan)
-                                    .orElseGet(() -> {
-                                        Plan newPlan = new Plan();
-                                        newPlan.setNombre(nombrePlan);
-                                        newPlan.setAnio(anioPlan);
-                                        newPlan.setEtapa(etapa);
-                                        newPlan.setEstado(estadoPlan);
-                                        return planRepository.save(newPlan);
-                                    });
-
-                            Carrera carrera = carreraRepository.findById(idCarrera)
-                                    .orElseThrow(() -> new RuntimeException("Carrera no encontrada con ID: " + idCarrera));
-
-                            // Verificar duplicados en Plan_Carrera usando Plan y Carrera
-                            Optional<Plan_Carrera> existingPlanCarrera = plan_carreraRepository.findByPlanAndCarrera(plan, carrera);
-                            Plan_Carrera planCarrera;
-                            if (existingPlanCarrera.isPresent()) {
-                                planCarrera = existingPlanCarrera.get();
-                            } else {
-                                // Crear nuevo Plan_Carrera si no existe
-                                planCarrera = new Plan_Carrera();
-                                planCarrera.setPlan(plan);
-                                planCarrera.setCarrera(carrera);
-                                planCarrera.setEstado(1); // Estado predeterminado
-                                planCarrera = plan_carreraRepository.save(planCarrera);
-                            }
-
-                            // Evitar duplicados en Matricula
-                            Optional<Matricula> existingMatricula = matriculaRepository.findByEstudianteAndPlanCarreraAndAnio(estudiante, planCarrera, anioPlan);
-                            if (existingMatricula.isPresent()) {
-                                System.err.println("Matrícula duplicada en la fila " + row.getRowNum());
-                                continue;
-                            }
-
-                            // Crear y guardar Matricula
-                            Matricula matricula = new Matricula();
-                            matricula.setEstudiante(estudiante);
-                            matricula.setPlan_carrera(planCarrera);
-                            matricula.setHoras_totales(horasTotales);
-                            matricula.setAnio(anioPlan);
-                            matricula.setEstado(estadoMatricula);
-                            matriculaRepository.save(matricula);
+                        // Leer datos para Plan, Carrera y Matricula
+                        String nombrePlan = getCellValueAsString(row.getCell(8));
+                        long idCarrera = (long) getCellValueAsNumeric(row.getCell(9));
+                        if (nombrePlan == null || nombrePlan.isEmpty() || idCarrera == 0) {
+                            System.err.println("Datos incompletos para Plan o Carrera en la fila " + row.getRowNum());
+                            continue;
                         }
+
+                        int horasTotales = 0;
+                        int estadoMatricula = 1;
+                        int[] anioEtapa = extractAnioYEtapaFromPlan(nombrePlan); // Extraer año y etapa del nombre del plan
+                        int anioPlan = anioEtapa[0];
+                        int etapa = anioEtapa[1];
+                        int estadoPlan = 1;
+
+                        // Buscar o crear Plan en base a los campos únicos
+                        Plan plan = planRepository.findByNombreAndAnioAndEtapaAndEstado(nombrePlan, anioPlan, etapa, estadoPlan)
+                                .orElseGet(() -> {
+                                    Plan newPlan = new Plan();
+                                    newPlan.setNombre(nombrePlan);
+                                    newPlan.setAnio(anioPlan);
+                                    newPlan.setEtapa(etapa);
+                                    newPlan.setEstado(estadoPlan);
+                                    return planRepository.save(newPlan);
+                                });
+
+                        Carrera carrera = carreraRepository.findById(idCarrera)
+                                .orElseThrow(() -> new RuntimeException("Carrera no encontrada con ID: " + idCarrera));
+
+                        // Verificar duplicados en Plan_Carrera usando Plan y Carrera
+                        Optional<Plan_Carrera> existingPlanCarrera = plan_carreraRepository.findByPlanAndCarrera(plan, carrera);
+                        Plan_Carrera planCarrera;
+                        if (existingPlanCarrera.isPresent()) {
+                            planCarrera = existingPlanCarrera.get();
+                        } else {
+                            // Crear nuevo Plan_Carrera si no existe
+                            planCarrera = new Plan_Carrera();
+                            planCarrera.setPlan(plan);
+                            planCarrera.setCarrera(carrera);
+                            planCarrera.setEstado(1); // Estado predeterminado
+                            planCarrera = plan_carreraRepository.save(planCarrera);
+                        }
+
+                        // Evitar duplicados en Matricula
+                        Optional<Matricula> existingMatricula = matriculaRepository.findByEstudianteAndPlanCarreraAndAnio(estudiante, planCarrera, anioPlan);
+                        if (existingMatricula.isPresent()) {
+                            System.err.println("Matrícula duplicada en la fila " + row.getRowNum());
+                            continue;
+                        }
+
+                        // Crear y guardar Matricula
+                        Matricula matricula = new Matricula();
+                        matricula.setEstudiante(estudiante);
+                        matricula.setPlan_carrera(planCarrera);
+                        matricula.setHoras_totales(horasTotales);
+                        matricula.setAnio(anioPlan);
+                        matricula.setEstado(estadoMatricula);
+                        matriculaRepository.save(matricula);
                     }
 
                 } catch (Exception e) {
