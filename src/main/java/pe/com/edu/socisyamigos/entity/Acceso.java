@@ -21,7 +21,7 @@ public class Acceso {
     @Column(name="idacceso")
     private Long id;
 
-    @Column(name="nombre", length = 30, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="estado")

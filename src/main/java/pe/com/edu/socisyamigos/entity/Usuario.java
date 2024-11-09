@@ -26,10 +26,10 @@ public class Usuario {
     @JoinColumn(name="idpersona", nullable = false)
     private Persona persona;
 
-    @Column(name="username", length = 30, nullable = false)
+    @Column(name="username", length = 50, nullable = false)
     private String username;
 
-    @Column(name="password", length = 30, nullable = false)
+    @Column(name="password", length = 50, nullable = false)
     private String password;
 
     @Column(name="estado")

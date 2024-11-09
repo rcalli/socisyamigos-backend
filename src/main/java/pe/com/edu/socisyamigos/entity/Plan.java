@@ -18,8 +18,7 @@ import java.util.Set;
 public class Plan {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "plan_seq_gen")
-    @SequenceGenerator(name = "plan_seq_gen", sequenceName = "plan_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idplan", nullable = false)
     private Long id;
 

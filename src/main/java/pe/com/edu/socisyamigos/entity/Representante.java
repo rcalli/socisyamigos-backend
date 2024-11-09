@@ -30,7 +30,7 @@ public class Representante {
     @JoinColumn(name="idempresa", nullable = false)
     private Empresa empresa;
 
-    @Column(name="cargo", length = 30, nullable = false)
+    @Column(name="cargo", length = 50, nullable = false)
     private String cargo;
 
     @Column(name="estado")

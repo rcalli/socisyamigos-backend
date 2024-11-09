@@ -27,7 +27,7 @@ public class Doc {
     @JoinColumn(name="iddetalle_ppp", nullable = false)
     private Detalle_PPP detalle_ppp;
 
-    @Column(name="nombre", length = 30, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="ruta_archivo", length = 200, nullable = false)

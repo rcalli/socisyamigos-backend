@@ -39,6 +39,9 @@ public class EstudianteServiceImpl implements EstudianteService {
     @Autowired
     private CarreraRepository carreraRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Override
     public Estudiante create(Estudiante cat) {
 
@@ -119,6 +122,16 @@ public class EstudianteServiceImpl implements EstudianteService {
                                 newPersona.setEstado(estadoPersona);
                                 return personaRepository.save(newPersona);
                             });
+
+                    // Crear o recuperar Usuario para la Persona
+                    usuarioRepository.findByPersona(persona).orElseGet(() -> {
+                        Usuario usuario = new Usuario();
+                        usuario.setPersona(persona);
+                        usuario.setUsername(generateUsername(nombre, apepat)); // Generar username
+                        usuario.setPassword(dni); // La contraseña es el DNI
+                        usuario.setEstado(1); // Estado inicial 1
+                        return usuarioRepository.save(usuario);
+                    });
 
                     // Leer datos de Estudiante
                     String codigo = getCellValueAsString(row.getCell(8));
@@ -203,7 +216,9 @@ public class EstudianteServiceImpl implements EstudianteService {
         }
     }
 
-
+    private String generateUsername(String nombre, String apepat) {
+        return (nombre.toLowerCase() + "." + apepat.toLowerCase()).replaceAll("\\s+", "");
+    }
 
     // Métodos auxiliares para obtener el valor de las celdas
     private String getCellValueAsString(Cell cell) {

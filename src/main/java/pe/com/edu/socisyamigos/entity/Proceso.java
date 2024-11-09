@@ -22,7 +22,7 @@ public class Proceso {
     @Column(name="idproceso")
     private Long id;
 
-    @Column(name="nombre", length = 20, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="descripcion", length = 200)

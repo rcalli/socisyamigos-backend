@@ -26,7 +26,7 @@ public class Linea_Carrera {
     @JoinColumn(name="idcarrera", nullable = false)
     private Carrera carrera;
 
-    @Column(name="nombre", length = 20, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="estado")

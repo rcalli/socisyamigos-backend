@@ -25,7 +25,7 @@ public class Recurso {
     @JoinColumn(name="idproceso_requisito", nullable = false)
     private Proceso_Requisito proceso_requisito;
 
-    @Column(name="nombre", length = 30, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="ruta_archivo", length = 200, nullable = false)
