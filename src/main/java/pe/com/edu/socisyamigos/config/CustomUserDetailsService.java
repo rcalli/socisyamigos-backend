@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import pe.com.edu.socisyamigos.entity.Usuario;
 import pe.com.edu.socisyamigos.repository.UsuarioRepository;
+import pe.com.edu.socisyamigos.repository.Usuario_rolRepository;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,13 +20,16 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UsuarioRepository userRepository;
 
+    @Autowired
+    private Usuario_rolRepository usuarioRolRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Usuario user = userRepository.findByUsername(username) .orElseThrow(() ->
                 new UsernameNotFoundException("User not exists by Username or Email"));
 
-        Set<GrantedAuthority> authorities = user.getUsuario_roles().stream()
+        Set<GrantedAuthority> authorities = usuarioRolRepository.findByUsuario(user).stream()
                 .map((role) -> new SimpleGrantedAuthority(role.getRol().getNombre()))
                 .collect(Collectors.toSet());
 
