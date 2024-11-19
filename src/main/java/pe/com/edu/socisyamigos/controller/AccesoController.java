@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ import pe.com.edu.socisyamigos.service.AccesoService;
 public class AccesoController {
     @Autowired
     private AccesoService accesoService;
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Acceso>> readAll(){
         try {
@@ -41,6 +42,7 @@ public class AccesoController {
         }
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Acceso> crear(@Valid @RequestBody Acceso cat){
         try {
@@ -52,6 +54,7 @@ public class AccesoController {
         }
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Acceso> getAccesoId(@PathVariable("id") Long id){
         try {
@@ -63,6 +66,7 @@ public class AccesoController {
         }
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Acceso> delAcceso(@PathVariable("id") Long id){
         try {
@@ -74,6 +78,7 @@ public class AccesoController {
         }
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAcceso(@PathVariable("id") Long id, @Valid @RequestBody Acceso cat){
 

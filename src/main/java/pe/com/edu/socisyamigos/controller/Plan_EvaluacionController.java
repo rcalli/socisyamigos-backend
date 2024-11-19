@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class Plan_EvaluacionController {
     
     @Autowired
     private Plan_EvaluacionService planEvaluacionService;
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Plan_Evaluacion>> readAll() {
         try {
@@ -41,7 +42,7 @@ public class Plan_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Plan_Evaluacion> crear(@Valid @RequestBody Plan_Evaluacion cat) {
         try {
@@ -51,7 +52,7 @@ public class Plan_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Plan_Evaluacion> getPlan_EvaluacionId(@PathVariable("id") Long id) {
         try {
@@ -61,7 +62,7 @@ public class Plan_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Plan_Evaluacion> delPlan_Evaluacion(@PathVariable("id") Long id) {
         try {
@@ -71,7 +72,7 @@ public class Plan_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePlan_Evaluacion(@PathVariable("id") Long id, @Valid @RequestBody Plan_Evaluacion cat) {
         Optional<Plan_Evaluacion> c = planEvaluacionService.read(id);

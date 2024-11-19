@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class Proceso_RequisitoController {
     
     @Autowired
     private Proceso_RequisitoService procesoRequisitoService;
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Proceso_Requisito>> readAll() {
         try {
@@ -41,7 +42,7 @@ public class Proceso_RequisitoController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Proceso_Requisito> crear(@Valid @RequestBody Proceso_Requisito cat) {
         try {
@@ -51,7 +52,7 @@ public class Proceso_RequisitoController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Proceso_Requisito> getProceso_RequisitoId(@PathVariable("id") Long id) {
         try {
@@ -61,7 +62,7 @@ public class Proceso_RequisitoController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Proceso_Requisito> delProceso_Requisito(@PathVariable("id") Long id) {
         try {
@@ -71,7 +72,7 @@ public class Proceso_RequisitoController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProceso_Requisito(@PathVariable("id") Long id, @Valid @RequestBody Proceso_Requisito cat) {
         Optional<Proceso_Requisito> c = procesoRequisitoService.read(id);

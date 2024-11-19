@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,8 @@ public class Acceso_rolController {
     
     @Autowired
     private Acceso_rolService accesoRolService;
-    
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Acceso_rol>> readAll() {
         try {
@@ -41,7 +43,7 @@ public class Acceso_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Acceso_rol> crear(@Valid @RequestBody Acceso_rol cat) {
         try {
@@ -51,7 +53,7 @@ public class Acceso_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Acceso_rol> getAcceso_rolId(@PathVariable("id") Long id) {
         try {
@@ -61,7 +63,7 @@ public class Acceso_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Acceso_rol> delAcceso_rol(@PathVariable("id") Long id) {
         try {
@@ -71,7 +73,7 @@ public class Acceso_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAcceso_rol(@PathVariable("id") Long id, @Valid @RequestBody Acceso_rol cat) {
         Optional<Acceso_rol> c = accesoRolService.read(id);

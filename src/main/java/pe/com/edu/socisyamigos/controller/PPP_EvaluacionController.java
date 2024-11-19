@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class PPP_EvaluacionController {
     
     @Autowired
     private PPP_EvaluacionService pppEvaluacionService;
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PPP_Evaluacion>> readAll() {
         try {
@@ -41,7 +42,7 @@ public class PPP_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PPP_Evaluacion> crear(@Valid @RequestBody PPP_Evaluacion cat) {
         try {
@@ -51,7 +52,7 @@ public class PPP_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PPP_Evaluacion> getPPP_EvaluacionId(@PathVariable("id") Long id) {
         try {
@@ -61,7 +62,7 @@ public class PPP_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<PPP_Evaluacion> delPPP_Evaluacion(@PathVariable("id") Long id) {
         try {
@@ -71,7 +72,7 @@ public class PPP_EvaluacionController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePPP_Evaluacion(@PathVariable("id") Long id, @Valid @RequestBody PPP_Evaluacion cat) {
         Optional<PPP_Evaluacion> c = pppEvaluacionService.read(id);

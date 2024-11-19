@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class Usuario_rolController {
     
     @Autowired
     private Usuario_rolService usuarioRolService;
-    
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Usuario_rol>> readAll() {
         try {
@@ -41,7 +42,7 @@ public class Usuario_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Usuario_rol> crear(@Valid @RequestBody Usuario_rol cat) {
         try {
@@ -51,7 +52,7 @@ public class Usuario_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Usuario_rol> getUsuario_rolId(@PathVariable("id") Long id) {
         try {
@@ -61,7 +62,7 @@ public class Usuario_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Usuario_rol> delUsuario_rol(@PathVariable("id") Long id) {
         try {
@@ -71,7 +72,7 @@ public class Usuario_rolController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUsuario_rol(@PathVariable("id") Long id, @Valid @RequestBody Usuario_rol cat) {
         Optional<Usuario_rol> c = usuarioRolService.read(id);
