@@ -1,6 +1,7 @@
 package pe.com.edu.socisyamigos.config;
 
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -43,20 +44,27 @@ public class JwtTokenProvider {
     public String getUsername(String token){
 
         return Jwts.parser()
-                .verifyWith((SecretKey) key())
+                .setSigningKey(key())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload()
+                .parseClaimsJws(token)
+                .getBody()
                 .getSubject();
     }
 
     // validate JWT token
-    public boolean validateToken(String token){
-        Jwts.parser()
-                .verifyWith((SecretKey) key())
-                .build()
-                .parse(token);
-        return true;
-
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            System.err.println("Token expirado: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Token inválido: " + e.getMessage());
+        }
+        return false;
     }
 }
+
