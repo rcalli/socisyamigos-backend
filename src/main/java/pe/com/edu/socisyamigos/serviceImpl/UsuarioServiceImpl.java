@@ -3,6 +3,7 @@ package pe.com.edu.socisyamigos.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pe.com.edu.socisyamigos.entity.Rol;
 import pe.com.edu.socisyamigos.entity.Usuario;
 import pe.com.edu.socisyamigos.repository.UsuarioRepository;
 import pe.com.edu.socisyamigos.service.UsuarioService;
@@ -44,5 +45,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public Optional<Long> findIdByUsername(String username) {
         return usuarioRepository.findIdByUsername(username);
+    }
+
+    @Override
+    public List<Rol> findRolesByUsername(String username) {
+        return usuarioRepository.findRolesByUsername(username);
     }
 }

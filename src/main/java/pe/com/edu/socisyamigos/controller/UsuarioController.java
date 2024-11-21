@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.entity.Rol;
 import pe.com.edu.socisyamigos.entity.Usuario;
 import pe.com.edu.socisyamigos.service.UsuarioService;
 
@@ -88,5 +89,15 @@ public class UsuarioController {
         return usuarioService.findIdByUsername(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/roles/{username}")
+    public ResponseEntity<List<Rol>> getRolesByUsername(@PathVariable String username) {
+        List<Rol> roles = usuarioService.findRolesByUsername(username);
+        if (!roles.isEmpty()) {
+            return ResponseEntity.ok(roles);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
