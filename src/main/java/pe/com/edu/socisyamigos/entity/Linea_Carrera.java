@@ -23,7 +23,7 @@ public class Linea_Carrera {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="idcarrera", nullable = false)
+    @JoinColumn(name="idcarrera", nullable = true)
     private Carrera carrera;
 
     @Column(name="nombre", length = 50, nullable = false)

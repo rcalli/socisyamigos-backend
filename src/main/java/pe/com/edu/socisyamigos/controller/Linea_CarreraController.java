@@ -1,25 +1,22 @@
 
 package pe.com.edu.socisyamigos.controller;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.entity.Carrera;
 import pe.com.edu.socisyamigos.entity.Linea_Carrera;
+import pe.com.edu.socisyamigos.service.CarreraService;
 import pe.com.edu.socisyamigos.service.Linea_CarreraService;
 
 @RestController
@@ -29,6 +26,9 @@ public class Linea_CarreraController {
     
     @Autowired
     private Linea_CarreraService lineaCarreraService;
+
+    @Autowired
+    private CarreraService carreraService;
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Linea_Carrera>> readAll() {
@@ -82,4 +82,47 @@ public class Linea_CarreraController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Linea_Carrera> partialUpdateLineaCarrera(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> updates) {
+
+        Optional<Linea_Carrera> optionalLineaCarrera = lineaCarreraService.read(id);
+
+        if (optionalLineaCarrera.isPresent()) {
+            Linea_Carrera lineaCarrera = optionalLineaCarrera.get();
+
+            updates.forEach((key, value) -> {
+                if ("carrera".equals(key)) {
+                    // Handle nested Carrera object
+                    Map<String, Object> carreraData = (Map<String, Object>) value;
+                    if (carreraData.containsKey("id")) {
+                        Long carreraId = Long.valueOf(carreraData.get("id").toString());
+                        Optional<Carrera> carrera = carreraService.read(carreraId);
+                        if (carrera.isPresent()) {
+                            lineaCarrera.setCarrera(carrera.get());
+                        } else {
+                            throw new IllegalArgumentException("Invalid Carrera ID: " + carreraId);
+                        }
+                    }
+                } else {
+                    // Handle other fields dynamically
+                    Field field = ReflectionUtils.findField(Linea_Carrera.class, key);
+                    if (field != null) {
+                        field.setAccessible(true);
+                        ReflectionUtils.setField(field, lineaCarrera, value);
+                    }
+                }
+            });
+
+            Linea_Carrera updatedLineaCarrera = lineaCarreraService.update(lineaCarrera);
+            return ResponseEntity.ok(updatedLineaCarrera);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

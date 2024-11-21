@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Orígenes permitidos
-        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH" )); // Métodos permitidos
         corsConfiguration.setAllowedHeaders(Arrays.asList("*")); // Encabezados permitidos
         corsConfiguration.setAllowCredentials(true); // Permitir credenciales (como cookies o headers Authorization)
 

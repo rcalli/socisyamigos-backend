@@ -19,4 +19,5 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
     Optional<Matricula> findByEstudianteAndPlanCarreraAndAnio(@Param("estudiante") Estudiante estudiante,
                                                               @Param("planCarrera") Plan_Carrera planCarrera,
                                                               @Param("anio") int anio);
+
 }
