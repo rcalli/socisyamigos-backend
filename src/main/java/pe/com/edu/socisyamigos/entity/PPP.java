@@ -38,7 +38,7 @@ public class PPP {
     private Matricula matricula;
 
     @ManyToOne
-    @JoinColumn(name="idsupervisor", nullable = false)
+    @JoinColumn(name="idsupervisor", nullable = true)
     private Supervisor supervisor;
 
     @Column(name="fecha_inicio")
