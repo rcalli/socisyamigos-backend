@@ -12,4 +12,5 @@ public interface UsuarioService {
     public void delete(Long id);
     public Optional<Usuario> read(Long id);
     public List<Usuario> readAll();
+    public Optional<Long> findIdByUsername(String username);
 }

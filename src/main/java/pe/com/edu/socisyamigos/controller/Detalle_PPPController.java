@@ -3,6 +3,7 @@ package pe.com.edu.socisyamigos.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import pe.com.edu.socisyamigos.entity.Detalle_PPP;
+import pe.com.edu.socisyamigos.entity.*;
+import pe.com.edu.socisyamigos.repository.Detalle_PPPRepository;
+import pe.com.edu.socisyamigos.repository.EstudianteRepository;
+import pe.com.edu.socisyamigos.repository.UsuarioRepository;
 import pe.com.edu.socisyamigos.service.Detalle_PPPService;
 
 @RestController
@@ -29,6 +33,16 @@ public class Detalle_PPPController {
     
     @Autowired
     private Detalle_PPPService detallePppService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private EstudianteRepository estudianteRepository;
+
+    @Autowired
+    private Detalle_PPPRepository detallePPPRepository;
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<Detalle_PPP>> readAll() {
@@ -80,6 +94,50 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(detallePppService.update(cat), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/ppp/usuario/{userId}")
+    public ResponseEntity<?> getPPPDetailsByUserId(@PathVariable Long userId) {
+        try {
+            // Verificar si el usuario existe
+            Optional<Usuario> usuarioOptional = usuarioRepository.findById(userId);
+            if (!usuarioOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+            }
+
+            Usuario usuario = usuarioOptional.get();
+            Persona personaUsuario = usuario.getPersona();
+
+            // Buscar estudiante relacionado con la misma persona
+            Optional<Estudiante> estudianteOptional = estudianteRepository.findByPersona(personaUsuario);
+            if (!estudianteOptional.isPresent()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estudiante no encontrado para el usuario dado");
+            }
+
+            Estudiante estudiante = estudianteOptional.get();
+            Set<Matricula> matriculas = estudiante.getMatriculas();
+
+            if (matriculas == null || matriculas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron matrículas para el estudiante");
+            }
+
+            // Seleccionar la primera matrícula
+            Matricula matricula = matriculas.iterator().next();
+
+            Set<PPP> ppps = matricula.getPpps();
+            if (ppps == null || ppps.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("PPP no encontrada para la matrícula del estudiante");
+            }
+            // Seleccionar el primer `PPP`
+            PPP ppp = ppps.iterator().next();
+
+            // Obtener los detalles de la PPP (Procesos y Requisitos)
+            List<Detalle_PPP> detallesPPP = detallePPPRepository.findByPpp(ppp);
+
+            return ResponseEntity.ok(detallesPPP);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los datos: " + e.getMessage());
         }
     }
 }

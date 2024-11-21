@@ -1,5 +1,6 @@
 package pe.com.edu.socisyamigos.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class PPP {
 
     @ManyToOne
     @JoinColumn(name="idmatricula", nullable = false)
+    @JsonBackReference
     private Matricula matricula;
 
     @ManyToOne

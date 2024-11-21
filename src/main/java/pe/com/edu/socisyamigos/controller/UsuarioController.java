@@ -82,4 +82,11 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/id-by-username/{username}")
+    public ResponseEntity<Long> getIdByUsername(@PathVariable String username) {
+        return usuarioService.findIdByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

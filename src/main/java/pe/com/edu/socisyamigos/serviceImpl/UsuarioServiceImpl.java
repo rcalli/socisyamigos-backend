@@ -41,4 +41,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Override
+    public Optional<Long> findIdByUsername(String username) {
+        return usuarioRepository.findIdByUsername(username);
+    }
 }

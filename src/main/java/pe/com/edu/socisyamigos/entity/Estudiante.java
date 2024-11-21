@@ -32,7 +32,7 @@ public class Estudiante {
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "estudiante")
     @JsonIgnore
     private Set<Matricula> matriculas;
 
