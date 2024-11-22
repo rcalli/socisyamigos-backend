@@ -81,4 +81,29 @@ public class PPPController {
     public List<Map<String, Object>> getFilteredPPPs(@PathVariable String nombreProceso) {
         return pppService.findFilteredPPPsByProcessName(nombreProceso);
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/detalle/{idPPP}")
+    public ResponseEntity<?> getEstudianteDetalle(@PathVariable Long idPPP) {
+        try {
+            var ppp = pppService.findById(idPPP);
+            var estudiante = ppp.getMatricula().getEstudiante();
+            var matricula = ppp.getMatricula();
+            var response = Map.of(
+                    "nombre", estudiante.getPersona().getNombre(),
+                    "dni", estudiante.getPersona().getDni(),
+                    "programa", matricula.getPlan_carrera().getCarrera().getNombre(),
+                    "plan", matricula.getPlan_carrera().getPlan().getNombre(),
+                    "lineaTrabajo", ppp.getLinea_carrera().getNombre(),
+                    "direccion", estudiante.getPersona().getDireccion(),
+                    "codigo", estudiante.getCodigo(),
+                    "correo", estudiante.getPersona().getCorreo(),
+                    "telefono", estudiante.getPersona().getTelefono()
+            );
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró información para el idPPP: " + idPPP);
+        }
+    }
+
 }

@@ -53,4 +53,9 @@ public class PPPServiceImpl implements PPPService {
         Long idProceso = optionalIdProceso.get();
         return pppRepository.findFilteredPPPsByProcessId(idProceso);
     }
+    @Override
+    public PPP findById(Long idPPP) {
+        return pppRepository.findById(idPPP)
+                .orElseThrow(() -> new RuntimeException("PPP no encontrado con id: " + idPPP));
+    }
 }
