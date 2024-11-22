@@ -1,6 +1,7 @@
 
 package pe.com.edu.socisyamigos.serviceImpl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.com.edu.socisyamigos.entity.*;
@@ -17,6 +18,8 @@ public class PPPServiceImpl implements PPPService {
 
     @Autowired
     private ProcesoRepository procesoRepository;
+    @Autowired
+    private Detalle_PPPRepository detalle_PPPRepository;
 
     @Override
     public PPP create(PPP cat) {
@@ -57,5 +60,35 @@ public class PPPServiceImpl implements PPPService {
     public PPP findById(Long idPPP) {
         return pppRepository.findById(idPPP)
                 .orElseThrow(() -> new RuntimeException("PPP no encontrado con id: " + idPPP));
+    }
+    @Override
+    public void aceptarPPP(Long idPPP) {
+        // Cambiar estado de la PPP a 3
+        PPP ppp = pppRepository.findById(idPPP)
+                .orElseThrow(() -> new EntityNotFoundException("PPP no encontrada con id: " + idPPP));
+        ppp.setEstado(3);
+        pppRepository.save(ppp);
+
+        // Cambiar estado de los Detalle_PPP a 2
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_Id(idPPP);
+        for (Detalle_PPP detalle : detalles) {
+            detalle.setEstado(2);
+        }
+        detalle_PPPRepository.saveAll(detalles);
+    }
+    @Override
+    public void rechazarPPP(Long idPPP) {
+        // Cambiar estado de la PPP a 4
+        PPP ppp = pppRepository.findById(idPPP)
+                .orElseThrow(() -> new EntityNotFoundException("PPP no encontrada con id: " + idPPP));
+        ppp.setEstado(4);
+        pppRepository.save(ppp);
+
+        // Cambiar estado de los Detalle_PPP a 3
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_Id(idPPP);
+        for (Detalle_PPP detalle : detalles) {
+            detalle.setEstado(3);
+        }
+        detalle_PPPRepository.saveAll(detalles);
     }
 }

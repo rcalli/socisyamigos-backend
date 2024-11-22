@@ -105,5 +105,17 @@ public class PPPController {
                     .body("No se encontró información para el idPPP: " + idPPP);
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/aceptar")
+    public ResponseEntity<String> aceptarPPP(@PathVariable Long id) {
+        pppService.aceptarPPP(id);
+        return ResponseEntity.ok("PPP aceptada y detalles actualizados.");
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/rechazar")
+    public ResponseEntity<String> rechazarPPP(@PathVariable Long id) {
+        pppService.rechazarPPP(id);
+        return ResponseEntity.ok("PPP rechazada y detalles actualizados.");
+    }
 
 }

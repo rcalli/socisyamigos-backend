@@ -13,4 +13,5 @@ import java.util.List;
  */
 public interface Detalle_PPPRepository extends JpaRepository<Detalle_PPP, Long> {
     List<Detalle_PPP> findByPpp(PPP ppp);
+    List<Detalle_PPP> findByPpp_Id(Long pppId);
 }

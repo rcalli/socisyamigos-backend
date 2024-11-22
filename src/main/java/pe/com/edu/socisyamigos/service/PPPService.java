@@ -15,4 +15,6 @@ public interface PPPService {
     public List<PPP> readAll();
     public List<Map<String, Object>> findFilteredPPPsByProcessName(String nombreProceso);
     PPP findById(Long idPPP);
+    public void aceptarPPP(Long idPPP);
+    public void rechazarPPP(Long idPPP);
 }
