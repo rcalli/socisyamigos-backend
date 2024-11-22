@@ -7,16 +7,16 @@ import pe.com.edu.socisyamigos.entity.*;
 import pe.com.edu.socisyamigos.repository.*;
 import pe.com.edu.socisyamigos.service.PPPService;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PPPServiceImpl implements PPPService {
-    
+
     @Autowired
     private PPPRepository pppRepository;
 
+    @Autowired
+    private ProcesoRepository procesoRepository;
 
     @Override
     public PPP create(PPP cat) {
@@ -43,6 +43,14 @@ public class PPPServiceImpl implements PPPService {
         return pppRepository.findAll();
     }
 
+    @Override
+    public List<Map<String, Object>> findFilteredPPPsByProcessName(String nombreProceso) {
+        Optional<Long> optionalIdProceso = procesoRepository.findIdByNombre(nombreProceso);
+        if (optionalIdProceso.isEmpty()) {
+            throw new IllegalArgumentException("El proceso con nombre '" + nombreProceso + "' no existe.");
+        }
 
-
+        Long idProceso = optionalIdProceso.get();
+        return pppRepository.findFilteredPPPsByProcessId(idProceso);
+    }
 }
