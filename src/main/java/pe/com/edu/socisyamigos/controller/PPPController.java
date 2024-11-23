@@ -1,10 +1,7 @@
 
 package pe.com.edu.socisyamigos.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -107,9 +104,11 @@ public class PPPController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/aceptar")
-    public ResponseEntity<String> aceptarPPP(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> aceptarPPP(@PathVariable Long id) {
         pppService.aceptarPPP(id);
-        return ResponseEntity.ok("PPP aceptada y detalles actualizados.");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "PPP aceptada y detalles actualizados para 'Docs Inicio'.");
+        return ResponseEntity.ok(response);
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/rechazar")

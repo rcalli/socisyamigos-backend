@@ -1,9 +1,7 @@
 
 package pe.com.edu.socisyamigos.controller;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,7 +41,7 @@ public class Detalle_PPPController {
     @Autowired
     private Detalle_PPPRepository detallePPPRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping
     public ResponseEntity<List<Detalle_PPP>> readAll() {
         try {
@@ -56,7 +54,7 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PostMapping
     public ResponseEntity<Detalle_PPP> crear(@Valid @RequestBody Detalle_PPP cat) {
         try {
@@ -66,7 +64,7 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<Detalle_PPP> getDetalle_PPPId(@PathVariable("id") Long id) {
         try {
@@ -76,7 +74,7 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Detalle_PPP> delDetalle_PPP(@PathVariable("id") Long id) {
         try {
@@ -86,7 +84,7 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDetalle_PPP(@PathVariable("id") Long id, @Valid @RequestBody Detalle_PPP cat) {
         Optional<Detalle_PPP> c = detallePppService.read(id);
@@ -96,7 +94,7 @@ public class Detalle_PPPController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/ppp/usuario/{userId}")
     public ResponseEntity<?> getPPPDetailsByUserId(@PathVariable Long userId) {
         try {
@@ -135,6 +133,10 @@ public class Detalle_PPPController {
             // Obtener los detalles de la PPP (Procesos y Requisitos)
             List<Detalle_PPP> detallesPPP = detallePPPRepository.findByPpp(ppp);
 
+            // REEMPLAZANDO LA PERSONA DE DETALLE_PPP POR LA PERSONA DEL USUARIO
+            detallesPPP.forEach(detalle -> {
+                detalle.setPersona(usuario.getPersona());
+            });
             return ResponseEntity.ok(detallesPPP);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener los datos: " + e.getMessage());

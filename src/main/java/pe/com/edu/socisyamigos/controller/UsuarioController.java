@@ -30,7 +30,7 @@ public class UsuarioController {
     
     @Autowired
     private UsuarioService usuarioService;
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping
     public ResponseEntity<List<Usuario>> readAll() {
         try {
@@ -43,7 +43,7 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PostMapping
     public ResponseEntity<Usuario> crear(@Valid @RequestBody Usuario cat) {
         try {
@@ -53,7 +53,7 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioId(@PathVariable("id") Long id) {
         try {
@@ -63,7 +63,7 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Usuario> delUsuario(@PathVariable("id") Long id) {
         try {
@@ -73,7 +73,7 @@ public class UsuarioController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUsuario(@PathVariable("id") Long id, @Valid @RequestBody Usuario cat) {
         Optional<Usuario> c = usuarioService.read(id);
@@ -83,14 +83,14 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/id-by-username/{username}")
     public ResponseEntity<Long> getIdByUsername(@PathVariable String username) {
         return usuarioService.findIdByUsername(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/roles/{username}")
     public ResponseEntity<List<Rol>> getRolesByUsername(@PathVariable String username) {
         List<Rol> roles = usuarioService.findRolesByUsername(username);

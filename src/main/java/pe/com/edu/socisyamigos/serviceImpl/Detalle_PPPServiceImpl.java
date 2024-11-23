@@ -37,8 +37,7 @@ public class Detalle_PPPServiceImpl implements Detalle_PPPService {
     }
 
     @Override
-    public List<Detalle_PPP> readAll() {
-        return detallePppRepository.findAll();
+    public List<Detalle_PPP> readAll() {return detallePppRepository.findAll();
     }
 
 }

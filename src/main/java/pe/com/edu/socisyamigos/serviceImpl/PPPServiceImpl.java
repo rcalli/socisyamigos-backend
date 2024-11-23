@@ -70,7 +70,7 @@ public class PPPServiceImpl implements PPPService {
         pppRepository.save(ppp);
 
         // Cambiar estado de los Detalle_PPP a 2
-        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_Id(idPPP);
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP, "Docs Inicio");
         for (Detalle_PPP detalle : detalles) {
             detalle.setEstado(2);
         }
@@ -85,7 +85,7 @@ public class PPPServiceImpl implements PPPService {
         pppRepository.save(ppp);
 
         // Cambiar estado de los Detalle_PPP a 3
-        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_Id(idPPP);
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP,"Docs Inicio");
         for (Detalle_PPP detalle : detalles) {
             detalle.setEstado(3);
         }
