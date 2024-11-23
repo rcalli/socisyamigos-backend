@@ -43,7 +43,6 @@ public class Matricula {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "matricula")
     @JsonIgnore
-    @JsonManagedReference
     private Set<PPP> ppps;
 
 }

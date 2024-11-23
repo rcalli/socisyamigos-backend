@@ -34,7 +34,6 @@ public class PPP {
 
     @ManyToOne
     @JoinColumn(name="idmatricula", nullable = false)
-    @JsonBackReference
     private Matricula matricula;
 
     @ManyToOne

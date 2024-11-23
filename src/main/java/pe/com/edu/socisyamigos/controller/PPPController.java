@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import pe.com.edu.socisyamigos.entity.PPP;
+import pe.com.edu.socisyamigos.repository.PPPRepository;
 import pe.com.edu.socisyamigos.service.PPPService;
 
 @RestController
@@ -20,6 +21,10 @@ public class PPPController {
     
     @Autowired
     private PPPService pppService;
+
+    @Autowired
+    private PPPRepository pppRepository;
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PPP>> readAll() {
@@ -71,6 +76,17 @@ public class PPPController {
             return new ResponseEntity<>(pppService.update(cat), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/estado")
+    public ResponseEntity<?> getPPPsByEstado() {
+        try {
+            List<Integer> estados = List.of(3, 5, 6); // Estados requeridos
+            List<PPP> ppps = pppRepository.findByEstado(estados);
+            return ResponseEntity.ok(ppps);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener PPP: " + e.getMessage());
         }
     }
     @PreAuthorize("hasRole('ADMIN')")

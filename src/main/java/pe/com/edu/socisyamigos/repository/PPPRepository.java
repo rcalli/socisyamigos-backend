@@ -29,4 +29,6 @@ public interface PPPRepository extends JpaRepository<PPP, Long> {
         GROUP BY ppp.id, ppp.matricula.estudiante.persona.nombre, ppp.empresa.nombre, ppp.matricula.estudiante.codigo, ppp.estado
     """)
     List<Map<String, Object>> findFilteredPPPsByProcessId(@Param("idProceso") Long idProceso);
+    @Query("SELECT p FROM PPP p WHERE p.estado IN :estados")
+    List<PPP> findByEstado(@Param("estados") List<Integer> estados);
 }
