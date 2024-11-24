@@ -1,7 +1,9 @@
 
 package pe.com.edu.socisyamigos.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.dto.SupervisorAsignacionDto;
+import pe.com.edu.socisyamigos.entity.PPP;
 import pe.com.edu.socisyamigos.entity.Supervisor;
 import pe.com.edu.socisyamigos.service.SupervisorService;
 
@@ -80,6 +84,26 @@ public class SupervisorController {
             return new ResponseEntity<>(supervisorService.update(cat), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/carrera/{carreraId}")
+    public ResponseEntity<List<Supervisor>> getSupervisoresByCarreraId(@PathVariable Long carreraId) {
+        List<Supervisor> supervisores = supervisorService.findByCarreraId(carreraId);
+        return ResponseEntity.ok(supervisores);
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/guardar-supervisor")
+    public ResponseEntity<Map<String, String>> guardarSupervisor(@RequestBody SupervisorAsignacionDto request) {
+        try {
+            supervisorService.assignSupervisorToPPP(request.getPppId(), request.getSupervisorId());
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Supervisor asignado correctamente.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "Error al asignar el supervisor: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 }

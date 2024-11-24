@@ -12,4 +12,6 @@ public interface PPP_EvaluacionService {
     public void delete(Long id);
     public Optional<PPP_Evaluacion> read(Long id);
     public List<PPP_Evaluacion> readAll();
+    public void crearPPPEvaluacion(Long idPPP, Long idEvaluacion);
+    public List<PPP_Evaluacion> obtenerEvaluacionesPorPPP(Long idPPP);
 }

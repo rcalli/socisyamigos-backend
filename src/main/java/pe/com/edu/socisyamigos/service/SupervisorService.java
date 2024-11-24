@@ -12,4 +12,6 @@ public interface SupervisorService {
     public void delete(Long id);
     public Optional<Supervisor> read(Long id);
     public List<Supervisor> readAll();
+    public List<Supervisor> findByCarreraId(Long carreraId);
+    public void assignSupervisorToPPP(Long idPPP, Long idSupervisor);
 }

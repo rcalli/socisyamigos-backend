@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.dto.PPPEvaluacionCronogramaDto;
 import pe.com.edu.socisyamigos.entity.PPP_Evaluacion;
 import pe.com.edu.socisyamigos.service.PPP_EvaluacionService;
 
@@ -80,6 +81,29 @@ public class PPP_EvaluacionController {
             return new ResponseEntity<>(pppEvaluacionService.update(cat), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/generar-cronograma")
+    public ResponseEntity<String> crearPPPEvaluacion(@RequestBody PPPEvaluacionCronogramaDto request) {
+        try {
+            pppEvaluacionService.crearPPPEvaluacion(request.getIdPPP(), request.getIdEvaluacion());
+            return ResponseEntity.ok("Cronograma generado correctamente.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al generar cronograma: " + e.getMessage());
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/ppp/{idPPP}")
+    public ResponseEntity<List<PPP_Evaluacion>> obtenerPPPEvaluaciones(@PathVariable Long idPPP) {
+        try {
+            List<PPP_Evaluacion> evaluaciones = pppEvaluacionService.obtenerEvaluacionesPorPPP(idPPP);
+            return ResponseEntity.ok(evaluaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
     }
 }

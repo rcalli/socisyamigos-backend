@@ -29,7 +29,7 @@ public class PPP {
     private Empresa empresa;
 
     @ManyToOne
-    @JoinColumn(name="idlinea_carrera", nullable = false)
+    @JoinColumn(name="idlinea_carrera", nullable = true)
     private Linea_Carrera linea_carrera;
 
     @ManyToOne

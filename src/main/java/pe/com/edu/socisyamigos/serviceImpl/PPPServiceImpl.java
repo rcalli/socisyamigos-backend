@@ -62,32 +62,32 @@ public class PPPServiceImpl implements PPPService {
                 .orElseThrow(() -> new RuntimeException("PPP no encontrado con id: " + idPPP));
     }
     @Override
-    public void aceptarPPP(Long idPPP) {
+    public void aceptarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre) {
         // Cambiar estado de la PPP a 3
         PPP ppp = pppRepository.findById(idPPP)
                 .orElseThrow(() -> new EntityNotFoundException("PPP no encontrada con id: " + idPPP));
-        ppp.setEstado(3);
+        ppp.setEstado(estadoPPP);
         pppRepository.save(ppp);
 
-        // Cambiar estado de los Detalle_PPP a 2
-        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP, "Docs Inicio");
+        // Cambiar estado de los Detalle_PPP filtrados por procesoNombre
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP, procesoNombre);
         for (Detalle_PPP detalle : detalles) {
-            detalle.setEstado(2);
+            detalle.setEstado(estadoDetallePPP);
         }
         detalle_PPPRepository.saveAll(detalles);
     }
     @Override
-    public void rechazarPPP(Long idPPP) {
+    public void rechazarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre) {
         // Cambiar estado de la PPP a 4
         PPP ppp = pppRepository.findById(idPPP)
                 .orElseThrow(() -> new EntityNotFoundException("PPP no encontrada con id: " + idPPP));
-        ppp.setEstado(4);
+        ppp.setEstado(estadoPPP);
         pppRepository.save(ppp);
 
-        // Cambiar estado de los Detalle_PPP a 3
-        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP,"Docs Inicio");
+        // Cambiar estado de los Detalle_PPP filtrados por procesoNombre
+        List<Detalle_PPP> detalles = detalle_PPPRepository.findByPpp_IdAndProcesoNombre(idPPP, procesoNombre);
         for (Detalle_PPP detalle : detalles) {
-            detalle.setEstado(3);
+            detalle.setEstado(estadoDetallePPP);
         }
         detalle_PPPRepository.saveAll(detalles);
     }

@@ -37,11 +37,11 @@ public class PPP_Evaluacion {
     @Column(name="nota")
     private Integer nota;
 
-    @Column(name="ruta_archivo", length = 200, nullable = false)
+    @Column(name="ruta_archivo", length = 200)
     private String ruta_archivo;
 
-    @Column(name="evidencia", length = 200, nullable = false)
-    private Double evidencia;
+    @Column(name="evidencia", length = 200)
+    private String evidencia;
 
     @Column(name="estado")
     private Integer estado;

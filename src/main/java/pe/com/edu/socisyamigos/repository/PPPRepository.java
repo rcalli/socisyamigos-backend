@@ -25,7 +25,7 @@ public interface PPPRepository extends JpaRepository<PPP, Long> {
         JOIN Requisito req ON detalle.requisito.id = req.id
         WHERE detalle.proceso.id = :idProceso
           AND detalle.estado != 0
-          AND ppp.estado = 1 OR ppp.estado = 3 OR ppp.estado = 4
+          AND ppp.estado = 1 OR ppp.estado = 3 OR ppp.estado = 4 OR ppp.estado = 5 OR ppp.estado = 6 OR ppp.estado = 7 OR ppp.estado = 8
         GROUP BY ppp.id, ppp.matricula.estudiante.persona.nombre, ppp.empresa.nombre, ppp.matricula.estudiante.codigo, ppp.estado
     """)
     List<Map<String, Object>> findFilteredPPPsByProcessId(@Param("idProceso") Long idProceso);

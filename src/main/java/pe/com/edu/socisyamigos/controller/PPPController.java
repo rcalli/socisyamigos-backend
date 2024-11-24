@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.dto.EstadoPPPDto;
 import pe.com.edu.socisyamigos.entity.PPP;
 import pe.com.edu.socisyamigos.repository.PPPRepository;
 import pe.com.edu.socisyamigos.service.PPPService;
@@ -120,17 +121,20 @@ public class PPPController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/aceptar")
-    public ResponseEntity<Map<String, String>> aceptarPPP(@PathVariable Long id) {
-        pppService.aceptarPPP(id);
+    public ResponseEntity<Map<String, String>> aceptarPPP(@PathVariable Long id, @RequestBody EstadoPPPDto request) {
+        pppService.aceptarPPP(id, request.getEstadoPPP(), request.getEstadoDetallePPP(), request.getProcesoNombre());
         Map<String, String> response = new HashMap<>();
-        response.put("message", "PPP aceptada y detalles actualizados para 'Docs Inicio'.");
+        response.put("message", "PPP y detalles actualizados correctamente.");
         return ResponseEntity.ok(response);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/rechazar")
-    public ResponseEntity<String> rechazarPPP(@PathVariable Long id) {
-        pppService.rechazarPPP(id);
-        return ResponseEntity.ok("PPP rechazada y detalles actualizados.");
+    public ResponseEntity<Map<String, String>> rechazarPPP(@PathVariable Long id, @RequestBody EstadoPPPDto request) {
+        pppService.rechazarPPP(id, request.getEstadoPPP(), request.getEstadoDetallePPP(), request.getProcesoNombre());
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "PPP rechazada y detalles actualizados correctamente.");
+        return ResponseEntity.ok(response);
     }
 
 }
