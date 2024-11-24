@@ -82,4 +82,17 @@ public class MatriculaController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> getMatriculaByUsuarioId(@PathVariable Long idUsuario) {
+        try {
+            List<Matricula> matriculas = matriculaService.getMatriculaByUsuarioId(idUsuario);
+            if (matriculas.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron matrículas para el usuario con ID: " + idUsuario);
+            }
+            return ResponseEntity.ok(matriculas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener matrículas: " + e.getMessage());
+        }
+    }
 }

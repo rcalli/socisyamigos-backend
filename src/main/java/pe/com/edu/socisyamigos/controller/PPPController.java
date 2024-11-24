@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import pe.com.edu.socisyamigos.dto.CrearPPPDto;
 import pe.com.edu.socisyamigos.dto.EstadoPPPDto;
 import pe.com.edu.socisyamigos.entity.PPP;
 import pe.com.edu.socisyamigos.repository.PPPRepository;
@@ -81,10 +82,13 @@ public class PPPController {
     }
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/estado")
-    public ResponseEntity<?> getPPPsByEstado() {
+    public ResponseEntity<?> getPPPsByEstado(@RequestParam List<Integer> estados) {
         try {
-            List<Integer> estados = List.of(3, 5, 6); // Estados requeridos
-            List<PPP> ppps = pppRepository.findByEstado(estados);
+            if (estados == null || estados.isEmpty()) {
+                return ResponseEntity.badRequest().body("Debe proporcionar al menos un estado.");
+            }
+
+            List<PPP> ppps = pppRepository.findByEstadoIn(estados);
             return ResponseEntity.ok(ppps);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener PPP: " + e.getMessage());
@@ -135,6 +139,27 @@ public class PPPController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "PPP rechazada y detalles actualizados correctamente.");
         return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/crear-ppp")
+    public ResponseEntity<?> createPPP(@RequestBody CrearPPPDto request) {
+        try {
+            String mensaje = pppService.createPPP(request); // Llama al servicio
+            Map<String, String> response = new HashMap<>();
+            response.put("message", mensaje); // Devuelve el mensaje de éxito
+            return ResponseEntity.ok(response); // Respuesta con estado 200
+        } catch (RuntimeException e) {
+            // Manejo de excepciones lanzadas por el servicio
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse); // Respuesta con estado 400
+        } catch (Exception e) {
+            // Manejo de otros errores
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Error inesperado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse); // Respuesta con estado 500
+        }
     }
 
 }

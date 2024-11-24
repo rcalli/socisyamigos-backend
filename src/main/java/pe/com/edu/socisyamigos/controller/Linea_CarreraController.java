@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,5 +125,21 @@ public class Linea_CarreraController {
         }
     }
 
+    @GetMapping("/matricula/{idMatricula}")
+    public ResponseEntity<?> getLineasCarreraByIdMatricula(@PathVariable Long idMatricula) {
+        try {
+            List<Linea_Carrera> lineasCarrera = lineaCarreraService.getLineasCarreraByIdMatricula(idMatricula);
+            if (lineasCarrera.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No se encontraron líneas de carrera para la matrícula con ID: " + idMatricula);
+            }
+            return ResponseEntity.ok(lineasCarrera);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener las líneas de carrera: " + e.getMessage());
+        }
+    }
 
 }

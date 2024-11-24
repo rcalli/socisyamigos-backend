@@ -1,6 +1,7 @@
 
 package pe.com.edu.socisyamigos.service;
 
+import pe.com.edu.socisyamigos.dto.CrearPPPDto;
 import pe.com.edu.socisyamigos.entity.PPP;
 
 import java.util.List;
@@ -17,4 +18,5 @@ public interface PPPService {
     PPP findById(Long idPPP);
     public void aceptarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre);
     public void rechazarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre);
+    public String createPPP(CrearPPPDto request);
 }

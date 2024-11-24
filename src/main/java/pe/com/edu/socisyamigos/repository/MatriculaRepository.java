@@ -8,6 +8,7 @@ import pe.com.edu.socisyamigos.entity.Estudiante;
 import pe.com.edu.socisyamigos.entity.Matricula;
 import pe.com.edu.socisyamigos.entity.Plan_Carrera;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,5 +20,6 @@ public interface MatriculaRepository extends JpaRepository<Matricula, Long> {
     Optional<Matricula> findByEstudianteAndPlanCarreraAndAnio(@Param("estudiante") Estudiante estudiante,
                                                               @Param("planCarrera") Plan_Carrera planCarrera,
                                                               @Param("anio") int anio);
-
+    @Query("SELECT m FROM Matricula m WHERE m.estudiante.persona.idpersona = :idPersona")
+    List<Matricula> findByPersonaId(@Param("idPersona") Long idPersona);
 }

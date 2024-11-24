@@ -1,10 +1,13 @@
 
 package pe.com.edu.socisyamigos.serviceImpl;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pe.com.edu.socisyamigos.entity.Matricula;
+import pe.com.edu.socisyamigos.entity.Usuario;
 import pe.com.edu.socisyamigos.repository.MatriculaRepository;
+import pe.com.edu.socisyamigos.repository.UsuarioRepository;
 import pe.com.edu.socisyamigos.service.MatriculaService;
 
 import java.util.List;
@@ -15,6 +18,9 @@ public class MatriculaServiceImpl implements MatriculaService {
     
     @Autowired
     private MatriculaRepository matriculaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
     
     @Override
     public Matricula create(Matricula cat) {
@@ -41,4 +47,16 @@ public class MatriculaServiceImpl implements MatriculaService {
         return matriculaRepository.findAll();
     }
 
+    @Override
+    public List<Matricula> getMatriculaByUsuarioId(Long idUsuario) {
+        // Obtener el usuario
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + idUsuario));
+
+        // Obtener el idPersona del usuario
+        Long idPersona = usuario.getPersona().getIdpersona();
+
+        // Buscar matrículas donde el idPersona del estudiante coincida
+        return matriculaRepository.findByPersonaId(idPersona);
+    }
 }

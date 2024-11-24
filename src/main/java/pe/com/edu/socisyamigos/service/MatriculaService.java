@@ -12,4 +12,5 @@ public interface MatriculaService {
     public void delete(Long id);
     public Optional<Matricula> read(Long id);
     public List<Matricula> readAll();
+    public List<Matricula> getMatriculaByUsuarioId(Long idUsuario);
 }

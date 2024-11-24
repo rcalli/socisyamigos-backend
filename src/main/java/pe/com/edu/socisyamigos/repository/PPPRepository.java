@@ -30,5 +30,6 @@ public interface PPPRepository extends JpaRepository<PPP, Long> {
     """)
     List<Map<String, Object>> findFilteredPPPsByProcessId(@Param("idProceso") Long idProceso);
     @Query("SELECT p FROM PPP p WHERE p.estado IN :estados")
-    List<PPP> findByEstado(@Param("estados") List<Integer> estados);
+    List<PPP> findByEstadoIn(List<Integer> estados);
+    boolean existsByMatriculaId(Long idMatricula);
 }

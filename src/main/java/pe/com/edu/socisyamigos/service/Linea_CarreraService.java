@@ -12,4 +12,5 @@ public interface Linea_CarreraService {
     public void delete(Long id);
     public Optional<Linea_Carrera> read(Long id);
     public List<Linea_Carrera> readAll();
+    public List<Linea_Carrera> getLineasCarreraByIdMatricula(Long idMatricula);
 }
