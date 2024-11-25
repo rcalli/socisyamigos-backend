@@ -14,4 +14,6 @@ public interface PPP_EvaluacionService {
     public List<PPP_Evaluacion> readAll();
     public void crearPPPEvaluacion(Long idPPP, Long idEvaluacion);
     public List<PPP_Evaluacion> obtenerEvaluacionesPorPPP(Long idPPP);
+    public List<PPP_Evaluacion> getPPPEvaluacionesByUsuarioId(Long idUsuario);
+    public PPP_Evaluacion registrarNota(Long idPPPEvaluacion, Integer nota);
 }

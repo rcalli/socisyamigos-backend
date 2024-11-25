@@ -1,7 +1,9 @@
 
 package pe.com.edu.socisyamigos.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,5 +107,31 @@ public class PPP_EvaluacionController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<?> getPPPEvaluacionesByUsuario(@PathVariable Long idUsuario) {
+        try {
+            List<PPP_Evaluacion> evaluaciones = pppEvaluacionService.getPPPEvaluacionesByUsuarioId(idUsuario);
+            if (evaluaciones.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(evaluaciones);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al obtener evaluaciones: " + e.getMessage());
+        }
+    }
+    @PutMapping("/registrar-nota")
+    public ResponseEntity<Map<String, String>> registrarNota(@RequestBody Map<String, Object> request) {
+        Long idPPPEvaluacion = Long.valueOf(request.get("idPPPEvaluacion").toString());
+        Integer nota = Integer.valueOf(request.get("nota").toString());
+
+        pppEvaluacionService.registrarNota(idPPPEvaluacion, nota);
+
+        // Retorna un mensaje en formato JSON
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Nota registrada exitosamente.");
+        return ResponseEntity.ok(response);
     }
 }
