@@ -17,7 +17,11 @@ public interface DocService {
     public Optional<Doc> read(Long id);
     public List<Doc> readAll();
 
-    public Doc saveFile(MultipartFile file, Long detalleId, Detalle_PPP detallePPP)throws IOException;
+
     public Resource loadFileAsResource(String fileName);
+
+    public Doc getById(Long id);
+
+    public Doc saveFile(MultipartFile file, Long detalleId, Detalle_PPP detallePPP) throws IOException;
 
 }

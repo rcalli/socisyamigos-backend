@@ -45,7 +45,7 @@ public class DocServiceImpl implements DocService {
             throw new RuntimeException("No se pudo crear el directorio de carga de archivos");
         }
     }
-    @Override
+
     public Doc saveFile(MultipartFile file, Long detalleId, Detalle_PPP detallePPP) throws IOException {
         // Crear nombre único para el archivo
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -67,7 +67,7 @@ public class DocServiceImpl implements DocService {
 
         return docRepository.save(doc);
     }
-    @Override
+
     public Resource loadFileAsResource(String fileName) {
         try {
             Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
@@ -107,5 +107,17 @@ public class DocServiceImpl implements DocService {
     public List<Doc> readAll() {
         return docRepository.findAll();
     }
+
+    @Override
+    public Doc getById(Long id) {
+        Optional<Doc> optionalDoc = docRepository.findById(id);
+        if (optionalDoc.isPresent()) {
+            return optionalDoc.get();
+        } else {
+            throw new RuntimeException("Documento no encontrado con id: " + id);
+        }
+    }
+
+
 
 }

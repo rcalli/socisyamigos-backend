@@ -2,6 +2,8 @@
 package pe.com.edu.socisyamigos.controller;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -30,17 +33,15 @@ public class DocController {
     @Autowired
     private DocService docService;
 
+
+
     @PostMapping("/upload/{detalleId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
+    @PreAuthorize("hasRole('ESTUDIANTE')")
     public ResponseEntity<Doc> uploadFile(
             @RequestParam("file") MultipartFile file,
             @PathVariable Long detalleId,
-            @RequestParam("detallePPP") String detallePPPJson) {
+            @RequestParam("detallePPP") Detalle_PPP detallePPP) {
         try {
-            // Convert JSON string to Detalle_PPP object
-            ObjectMapper objectMapper = new ObjectMapper();
-            Detalle_PPP detallePPP = objectMapper.readValue(detallePPPJson, Detalle_PPP.class);
-
             Doc doc = docService.saveFile(file, detalleId, detallePPP);
             return new ResponseEntity<>(doc, HttpStatus.CREATED);
         } catch (IOException ex) {
@@ -48,9 +49,7 @@ public class DocController {
         }
     }
 
-
     @GetMapping("/download/{fileName:.+}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         Resource resource = docService.loadFileAsResource(fileName);
 
