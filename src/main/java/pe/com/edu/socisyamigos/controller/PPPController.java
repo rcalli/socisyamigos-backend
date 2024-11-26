@@ -161,5 +161,44 @@ public class PPPController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse); // Respuesta con estado 500
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/crear-detalles/{idPPP}")
+    public ResponseEntity<?> crearDetallesPPP(@PathVariable Long idPPP) {
+        try {
+            pppService.crearDetallesPPP(idPPP);
+            return ResponseEntity.ok(Map.of("message", "Detalles de PPP creados exitosamente."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al crear detalles de PPP: " + e.getMessage()));
+        }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/rechazar-solicitud")
+    public ResponseEntity<Map<String, String>> rechazarPPP(@PathVariable Long id) {
+        try {
+            Optional<PPP> pppOptional = pppService.read(id);
+            if (pppOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "PPP no encontrada."));
+            }
+
+            PPP ppp = pppOptional.get();
+            if (ppp.getEstado() != 0) { // Verifica si está en estado pendiente
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "La PPP no está en estado pendiente y no puede ser rechazada."));
+            }
+
+            // Cambiar el estado de la PPP a rechazado
+            ppp.setEstado(2);
+            pppService.update(ppp);
+
+            return ResponseEntity.ok(Map.of("message", "PPP rechazada correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al rechazar la PPP: " + e.getMessage()));
+        }
+    }
 
 }

@@ -19,4 +19,5 @@ public interface PPPService {
     public void aceptarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre);
     public void rechazarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre);
     public String createPPP(CrearPPPDto request);
+    public void crearDetallesPPP(Long idPPP);
 }

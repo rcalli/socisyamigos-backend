@@ -35,7 +35,7 @@ public class Detalle_PPP {
     private Requisito requisito;
 
     @ManyToOne
-    @JoinColumn(name="idpersona", nullable = false)
+    @JoinColumn(name="idpersona")
     private Persona persona;
 
     @Column(name="orden")

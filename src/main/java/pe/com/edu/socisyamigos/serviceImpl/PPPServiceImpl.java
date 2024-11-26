@@ -27,6 +27,8 @@ public class PPPServiceImpl implements PPPService {
     private EmpresaRepository empresaRepository;
     @Autowired
     private Linea_CarreraRepository linea_CarreraRepository;
+    @Autowired
+    private Proceso_RequisitoRepository proceso_RequisitoRepository;
 
     @Override
     public PPP create(PPP cat) {
@@ -134,5 +136,39 @@ public class PPPServiceImpl implements PPPService {
 
         pppRepository.save(ppp);
         return "PPP creado exitosamente.";
+    }
+    @Override
+    public void crearDetallesPPP(Long idPPP) {
+        // Verificar si el PPP existe
+        PPP ppp = pppRepository.findById(idPPP)
+                .orElseThrow(() -> new RuntimeException("PPP no encontrado con ID: " + idPPP));
+
+        // Verificar si ya existen registros en Detalle_PPP para este PPP
+        boolean existenDetalles = detalle_PPPRepository.existsByPppId(idPPP);
+        if (existenDetalles) {
+            throw new RuntimeException("Ya existen detalles para este PPP.");
+        }
+
+        // Obtener el ID del plan de carrera asociado a la matrícula del PPP
+        Long idPlanCarrera = ppp.getMatricula().getPlan_carrera().getId();
+
+        // Buscar todos los registros de Proceso_Requisito con el mismo ID de plan de carrera
+        List<Proceso_Requisito> procesoRequisitos = proceso_RequisitoRepository.findByPlanCarreraId(idPlanCarrera);
+        if (procesoRequisitos.isEmpty()) {
+            throw new RuntimeException("No se encontraron procesos y requisitos para este plan de carrera.");
+        }
+
+        // Crear y guardar los registros en Detalle_PPP
+        for (Proceso_Requisito procesoRequisito : procesoRequisitos) {
+            Detalle_PPP detallePPP = new Detalle_PPP();
+            detallePPP.setPpp(ppp);
+            detallePPP.setProceso(procesoRequisito.getProceso());
+            detallePPP.setRequisito(procesoRequisito.getRequisito());
+            detallePPP.setOrden(procesoRequisito.getOrden());
+            detallePPP.setEstado(0); // Estado inicial: 0
+            detalle_PPPRepository.save(detallePPP);
+        }
+        ppp.setEstado(1);
+        pppRepository.save(ppp);
     }
 }
