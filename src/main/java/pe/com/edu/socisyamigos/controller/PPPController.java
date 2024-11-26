@@ -80,7 +80,7 @@ public class PPPController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COORDINADOR')")
     @GetMapping("/estado")
     public ResponseEntity<?> getPPPsByEstado(@RequestParam List<Integer> estados) {
         try {
@@ -99,7 +99,7 @@ public class PPPController {
     public List<Map<String, Object>> getFilteredPPPs(@PathVariable String nombreProceso) {
         return pppService.findFilteredPPPsByProcessName(nombreProceso);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COORDINADOR')")
     @GetMapping("/detalle/{idPPP}")
     public ResponseEntity<?> getEstudianteDetalle(@PathVariable Long idPPP) {
         try {
@@ -141,7 +141,7 @@ public class PPPController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PostMapping("/crear-ppp")
     public ResponseEntity<?> createPPP(@RequestBody CrearPPPDto request) {
         try {

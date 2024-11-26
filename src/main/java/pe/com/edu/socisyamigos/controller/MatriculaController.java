@@ -82,7 +82,7 @@ public class MatriculaController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<?> getMatriculaByUsuarioId(@PathVariable Long idUsuario) {
         try {

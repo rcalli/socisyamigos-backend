@@ -8,6 +8,7 @@ import pe.com.edu.socisyamigos.entity.PPP;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -32,4 +33,6 @@ public interface PPPRepository extends JpaRepository<PPP, Long> {
     @Query("SELECT p FROM PPP p WHERE p.estado IN :estados")
     List<PPP> findByEstadoIn(List<Integer> estados);
     boolean existsByMatriculaId(Long idMatricula);
+    @Query("SELECT p FROM PPP p WHERE p.id = :id")
+    Optional<PPP> findByIdCustom(@Param("id") Long id);
 }

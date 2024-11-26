@@ -29,7 +29,7 @@ public class EmpresaController {
     
     @Autowired
     private EmpresaService empresaService;
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping
     public ResponseEntity<List<Empresa>> readAll() {
         try {
@@ -42,7 +42,7 @@ public class EmpresaController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PostMapping
     public ResponseEntity<Empresa> crear(@Valid @RequestBody Empresa cat) {
         try {
@@ -52,7 +52,7 @@ public class EmpresaController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<Empresa> getEmpresaId(@PathVariable("id") Long id) {
         try {
@@ -62,7 +62,7 @@ public class EmpresaController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Empresa> delEmpresa(@PathVariable("id") Long id) {
         try {
@@ -72,7 +72,7 @@ public class EmpresaController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEmpresa(@PathVariable("id") Long id, @Valid @RequestBody Empresa cat) {
         Optional<Empresa> c = empresaService.read(id);

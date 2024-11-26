@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pe.com.edu.socisyamigos.entity.*;
@@ -41,6 +42,12 @@ public class EstudianteServiceImpl implements EstudianteService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private Usuario_rolRepository usuario_rolRepository;
+    @Autowired
+    private RolRepository rolRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Estudiante create(Estudiante cat) {
@@ -72,18 +79,15 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
     private int[] extractAnioYEtapaFromPlan(String nombrePlan) {
         try {
-            // Suponiendo que el formato es "YYYY-X" (ej. "2024-2")
             String[] partes = nombrePlan.split("-");
             int anio = Integer.parseInt(partes[0]); // Primera parte es el año
             int etapa = Integer.parseInt(partes[1]); // Segunda parte es la etapa
             return new int[]{anio, etapa};
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            // Manejo de errores en caso de formato inesperado
             System.err.println("Error al extraer año y etapa del nombre del plan: " + e.getMessage());
             return new int[]{0, 0}; // Valores por defecto en caso de error
         }
     }
-
 
     public void cargarDatosDesdeExcel(MultipartFile file) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
@@ -124,13 +128,29 @@ public class EstudianteServiceImpl implements EstudianteService {
                             });
 
                     // Crear o recuperar Usuario para la Persona
-                    usuarioRepository.findByPersona(persona).orElseGet(() -> {
-                        Usuario usuario = new Usuario();
-                        usuario.setPersona(persona);
-                        usuario.setUsername(generateUsername(nombre, apepat)); // Generar username
-                        usuario.setPassword(dni); // La contraseña es el DNI
-                        usuario.setEstado(1); // Estado inicial 1
-                        return usuarioRepository.save(usuario);
+                    Usuario usuario = usuarioRepository.findByPersona(persona).orElseGet(() -> {
+                        Usuario newUsuario = new Usuario();
+                        newUsuario.setPersona(persona);
+                        newUsuario.setUsername(generateUsername(nombre, apepat)); // Generar username
+
+                        // Encriptar contraseña antes de guardarla
+                        String encryptedPassword = passwordEncoder.encode(dni);
+                        newUsuario.setPassword(encryptedPassword);
+
+                        newUsuario.setEstado(1); // Estado inicial 1
+                        return usuarioRepository.save(newUsuario);
+                    });
+
+                    // Asignar el rol "ROLE_ESTUDIANTE" al usuario
+                    Rol rolEstudiante = rolRepository.findByNombre("ROLE_ESTUDIANTE")
+                            .orElseThrow(() -> new RuntimeException("Rol 'ROLE_ESTUDIANTE' no encontrado"));
+
+                    usuario_rolRepository.findByUsuarioAndRol(usuario, rolEstudiante).orElseGet(() -> {
+                        Usuario_rol usuarioRol = new Usuario_rol();
+                        usuarioRol.setUsuario(usuario);
+                        usuarioRol.setRol(rolEstudiante);
+                        usuarioRol.setEstado(1); // Estado activo
+                        return usuario_rolRepository.save(usuarioRol);
                     });
 
                     // Leer datos de Estudiante
@@ -149,8 +169,9 @@ public class EstudianteServiceImpl implements EstudianteService {
 
                         // Leer datos para Plan, Carrera y Matricula
                         String nombrePlan = getCellValueAsString(row.getCell(8));
-                        long idCarrera = (long) getCellValueAsNumeric(row.getCell(9));
-                        if (nombrePlan == null || nombrePlan.isEmpty() || idCarrera == 0) {
+                        String nombreCarrera = getCellValueAsString(row.getCell(9)); // Ahora se usa el nombre de la carrera
+
+                        if (nombrePlan == null || nombrePlan.isEmpty() || nombreCarrera == null || nombreCarrera.isEmpty()) {
                             System.err.println("Datos incompletos para Plan o Carrera en la fila " + row.getRowNum());
                             continue;
                         }
@@ -173,8 +194,9 @@ public class EstudianteServiceImpl implements EstudianteService {
                                     return planRepository.save(newPlan);
                                 });
 
-                        Carrera carrera = carreraRepository.findById(idCarrera)
-                                .orElseThrow(() -> new RuntimeException("Carrera no encontrada con ID: " + idCarrera));
+                        // Buscar carrera por nombre
+                        Carrera carrera = carreraRepository.findByNombre(nombreCarrera)
+                                .orElseThrow(() -> new RuntimeException("Carrera no encontrada con nombre: " + nombreCarrera));
 
                         // Verificar duplicados en Plan_Carrera usando Plan y Carrera
                         Optional<Plan_Carrera> existingPlanCarrera = plan_carreraRepository.findByPlanAndCarrera(plan, carrera);
@@ -215,7 +237,8 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     private String generateUsername(String nombre, String apepat) {
-        return (nombre.toLowerCase() + "." + apepat.toLowerCase()).replaceAll("\\s+", "");
+        String primerNombre = nombre.split("\\s+")[0]; // Toma el primer nombre
+        return (primerNombre.toLowerCase() + "." + apepat.toLowerCase()).replaceAll("\\s+", "");
     }
 
     // Métodos auxiliares para obtener el valor de las celdas

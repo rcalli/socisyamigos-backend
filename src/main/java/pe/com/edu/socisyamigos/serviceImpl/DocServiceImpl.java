@@ -36,6 +36,8 @@ public class DocServiceImpl implements DocService {
 
     @Value("${file.upload-dir}")
     private String uploadDir;
+    @Autowired
+    private Detalle_PPPRepository detalle_PPPRepository;
 
     @PostConstruct
     public void init() {
@@ -64,6 +66,10 @@ public class DocServiceImpl implements DocService {
         doc.setRuta_archivo(uniqueFileName);
         doc.setFecha(new Date(System.currentTimeMillis()));
         doc.setEstado(1); // Estado inicial
+
+        detallePPP.setEstado(1);
+
+        detalle_PPPRepository.save(detallePPP);
 
         return docRepository.save(doc);
     }

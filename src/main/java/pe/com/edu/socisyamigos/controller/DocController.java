@@ -36,19 +36,23 @@ public class DocController {
 
 
     @PostMapping("/upload/{detalleId}")
-    @PreAuthorize("hasRole('ESTUDIANTE')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     public ResponseEntity<Doc> uploadFile(
             @RequestParam("file") MultipartFile file,
             @PathVariable Long detalleId,
-            @RequestParam("detallePPP") Detalle_PPP detallePPP) {
+            @RequestParam("detallePPP") String detallePPPJson) {
         try {
+            // Convertir JSON a objeto Detalle_PPP
+            ObjectMapper objectMapper = new ObjectMapper();
+            Detalle_PPP detallePPP = objectMapper.readValue(detallePPPJson, Detalle_PPP.class);
+
             Doc doc = docService.saveFile(file, detalleId, detallePPP);
             return new ResponseEntity<>(doc, HttpStatus.CREATED);
         } catch (IOException ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         Resource resource = docService.loadFileAsResource(fileName);

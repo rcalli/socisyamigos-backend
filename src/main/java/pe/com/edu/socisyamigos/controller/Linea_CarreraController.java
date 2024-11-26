@@ -30,7 +30,7 @@ public class Linea_CarreraController {
 
     @Autowired
     private CarreraService carreraService;
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping
     public ResponseEntity<List<Linea_Carrera>> readAll() {
         try {
@@ -43,7 +43,7 @@ public class Linea_CarreraController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PostMapping
     public ResponseEntity<Linea_Carrera> crear(@Valid @RequestBody Linea_Carrera cat) {
         try {
@@ -53,7 +53,7 @@ public class Linea_CarreraController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/{id}")
     public ResponseEntity<Linea_Carrera> getLinea_CarreraId(@PathVariable("id") Long id) {
         try {
@@ -63,7 +63,7 @@ public class Linea_CarreraController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Linea_Carrera> delLinea_Carrera(@PathVariable("id") Long id) {
         try {
@@ -73,7 +73,7 @@ public class Linea_CarreraController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateLinea_Carrera(@PathVariable("id") Long id, @Valid @RequestBody Linea_Carrera cat) {
         Optional<Linea_Carrera> c = lineaCarreraService.read(id);
@@ -84,7 +84,7 @@ public class Linea_CarreraController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @PatchMapping("/{id}")
     public ResponseEntity<Linea_Carrera> partialUpdateLineaCarrera(
             @PathVariable Long id,
@@ -124,7 +124,7 @@ public class Linea_CarreraController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ESTUDIANTE')")
     @GetMapping("/matricula/{idMatricula}")
     public ResponseEntity<?> getLineasCarreraByIdMatricula(@PathVariable Long idMatricula) {
         try {

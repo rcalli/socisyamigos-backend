@@ -67,8 +67,8 @@ public class PPPServiceImpl implements PPPService {
     }
     @Override
     public PPP findById(Long idPPP) {
-        return pppRepository.findById(idPPP)
-                .orElseThrow(() -> new RuntimeException("PPP no encontrado con id: " + idPPP));
+        Optional<PPP> optionalPPP = pppRepository.findByIdCustom(idPPP);
+        return optionalPPP.orElseThrow(() -> new RuntimeException("PPP no encontrado con id: " + idPPP));
     }
     @Override
     public void aceptarPPP(Long idPPP, int estadoPPP, int estadoDetallePPP, String procesoNombre) {
