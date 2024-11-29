@@ -1,5 +1,6 @@
 package pe.com.edu.socisyamigos.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class PPP {
     private Empresa empresa;
 
     @ManyToOne
-    @JoinColumn(name="idlinea_carrera", nullable = false)
+    @JoinColumn(name="idlinea_carrera", nullable = true)
     private Linea_Carrera linea_carrera;
 
     @ManyToOne
@@ -36,7 +37,7 @@ public class PPP {
     private Matricula matricula;
 
     @ManyToOne
-    @JoinColumn(name="idsupervisor", nullable = false)
+    @JoinColumn(name="idsupervisor", nullable = true)
     private Supervisor supervisor;
 
     @Column(name="fecha_inicio")

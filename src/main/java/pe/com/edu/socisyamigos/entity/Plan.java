@@ -19,7 +19,7 @@ public class Plan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idplan")
+    @Column(name = "idplan", nullable = false)
     private Long id;
 
     @Column(name="nombre", length = 50, nullable = false)

@@ -1,12 +1,14 @@
 package pe.com.edu.socisyamigos.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -19,7 +21,7 @@ public class Matricula {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idmatricula")
+    @Column(name = "idmatricula", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -39,7 +41,7 @@ public class Matricula {
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matricula")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "matricula")
     @JsonIgnore
     private Set<PPP> ppps;
 

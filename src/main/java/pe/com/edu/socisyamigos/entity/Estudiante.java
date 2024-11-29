@@ -18,8 +18,7 @@ import java.util.Set;
 public class Estudiante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "estudiante_seq_gen")
-    @SequenceGenerator(name = "estudiante_seq_gen", sequenceName = "estudiante_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idestudiante", nullable = false)
     private Long idestudiante;
 
@@ -27,13 +26,13 @@ public class Estudiante {
     @JoinColumn(name="idpersona", nullable = false)
     private Persona persona;
 
-    @Column(name="codigo", length = 15, nullable = false)
+    @Column(name="codigo", length = 9, nullable = false)
     private String codigo;
 
     @Column(name="estado")
     private Integer estado;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "estudiante")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "estudiante")
     @JsonIgnore
     private Set<Matricula> matriculas;
 

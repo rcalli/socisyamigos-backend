@@ -17,18 +17,17 @@ import lombok.Setter;
 public class Persona {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persona_seq_gen")
-    @SequenceGenerator(name = "persona_seq_gen", sequenceName = "persona_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idpersona", nullable = false)
     private Long idpersona;
 
-    @Column(name="nombre", length = 30, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
-    @Column(name="apepat", length = 30, nullable = false)
+    @Column(name="apepat", length = 50, nullable = false)
     private String apepat;
 
-    @Column(name="apemat", length = 30, nullable = false)
+    @Column(name="apemat", length = 50, nullable = false)
     private String apemat;
 
     @Column(name="direccion", length = 50)
@@ -37,7 +36,7 @@ public class Persona {
     @Column(name="dni", length = 8, unique = true, nullable = false)
     private String dni;
 
-    @Column(name="correo", length = 30)
+    @Column(name="correo", length = 50)
     private String correo;
 
     @Column(name="telefono", length = 9)

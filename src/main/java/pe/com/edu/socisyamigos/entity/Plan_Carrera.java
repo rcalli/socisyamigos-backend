@@ -19,7 +19,7 @@ public class Plan_Carrera {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="idplan_carrera")
+    @Column(name = "idplan_carrera", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -31,7 +31,7 @@ public class Plan_Carrera {
     private Carrera carrera;
 
     @ManyToOne
-    @JoinColumn(name="idpersona", nullable = false)
+    @JoinColumn(name="idpersona")
     private Persona persona;
 
     @Column(name="n_carta")

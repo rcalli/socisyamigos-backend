@@ -23,7 +23,7 @@ public class Carrera {
     @Column(name="idcarrera")
     private Long id;
 
-    @Column(name="nombre", length = 20, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="estado")

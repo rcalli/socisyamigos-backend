@@ -22,7 +22,7 @@ public class Requisito {
     @Column(name="idrequisito")
     private Long id;
 
-    @Column(name="nombre", length = 30, nullable = false)
+    @Column(name="nombre", length = 50, nullable = false)
     private String nombre;
 
     @Column(name="descripcion", length = 200)
